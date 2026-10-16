@@ -1,0 +1,84 @@
+name: Recipe Backend Pipeline
+
+on:
+  push:
+    paths:
+      - "KN06/recipe/recipe-planner-backend/**"
+      - ".github/workflows/recipe-backend.yml"
+  pull_request:
+    paths:
+      - "KN06/recipe/recipe-planner-backend/**"
+  workflow_dispatch:
+
+defaults:
+  run:
+    working-directory: KN06/recipe/recipe-planner-backend
+
+permissions:
+  contents: read
+  checks: write
+  pages: write
+  id-token: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+          cache: maven
+      - name: Compile
+        run: mvn --batch-mode compile
+
+  test:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+          cache: maven
+      - name: Run unit tests
+        run: mvn --batch-mode test
+      - name: Show test results
+        if: always()
+        uses: dorny/test-reporter@v1
+        with:
+          name: Unit Tests
+          path: KN06/recipe/recipe-planner-backend/target/surefire-reports/TEST-*.xml
+          reporter: java-junit
+      - name: Collect reports
+        if: always()
+        run: |
+          mkdir -p public/coverage
+          cp -r target/reports/* public/
+          mv public/surefire.html public/index.html
+          cp -r target/site/jacoco/* public/coverage/
+      - name: Upload reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-reports
+          path: KN06/recipe/recipe-planner-backend/public
+      - name: Upload for GitHub Pages
+        if: always()
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: KN06/recipe/recipe-planner-backend/public
+
+  deploy-reports:
+    needs: test
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
