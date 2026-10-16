@@ -1,46 +1,52 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import './AddIngredient.css';
 import {Button, Col, Form, Row} from "react-bootstrap";
 
-const AddIngredient = ({ingredients, ingredient, updateIngredient, removeIngredient}) => {
+const units = ['PIECE', 'GRAMM', 'KILOGRAMM', 'LITRE', 'DECILITRE'];
+
+const AddIngredient = ({ingredient, updateIngredient, removeIngredient}) => {
+
+    const change = (field, value) => {
+        updateIngredient({...ingredient, [field]: value});
+    }
 
     return (
         <Row>
             <Col>
-                <Form.Group className="mb-1" controlId="formBasicName">
-                    <Form.Control placeholder="Name"/>
-                </Form.Group>
+                <Form.Control
+                    className="mb-1"
+                    placeholder="Name"
+                    aria-label="Ingredient name"
+                    value={ingredient.name}
+                    onChange={e => change('name', e.target.value)}/>
             </Col>
             <Col>
-                <Form.Group className="mb-1" controlId="formBasicUnit">
-                    <Form.Select>
-                        <option>PIECE</option>
-                        <option>GRAMM</option>
-                        <option>KILOGRAMM</option>
-                        <option>LITRE</option>
-                        <option>DECILITRE</option>
-                    </Form.Select>
-                </Form.Group>
+                <Form.Select
+                    className="mb-1"
+                    aria-label="Unit"
+                    value={ingredient.unit}
+                    onChange={e => change('unit', e.target.value)}>
+                    {units.map(unit => <option key={unit}>{unit}</option>)}
+                </Form.Select>
             </Col>
             <Col>
-                <Form.Group className="mb-1" controlId="quantity">
-                    <Form.Control placeholder="Quantity"/>
-                </Form.Group>
+                <Form.Control
+                    className="mb-1"
+                    type="number"
+                    placeholder="Quantity"
+                    aria-label="Quantity"
+                    value={ingredient.amount}
+                    onChange={e => change('amount', e.target.value)}/>
             </Col>
             <Col xs={1}>
                 <Button
-                    onClick={e => removeIngredient(ingredient)}
-                    variant='outline-dark'
+                    onClick={() => removeIngredient(ingredient)}
+                    variant="outline-dark"
                     className="mb-1"
                 >x</Button>
             </Col>
         </Row>
     )
 }
-
-AddIngredient.propTypes = {};
-
-AddIngredient.defaultProps = {};
 
 export default AddIngredient;
