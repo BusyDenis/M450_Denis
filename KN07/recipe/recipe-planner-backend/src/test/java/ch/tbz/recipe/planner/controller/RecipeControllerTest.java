@@ -18,10 +18,12 @@ import java.util.List;
 import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -107,5 +109,28 @@ class RecipeControllerTest {
                 .andExpect(jsonPath("$.name").value("Lasagne"));
 
         verify(recipeService).addRecipe(any(Recipe.class));
+    }
+
+    @Test
+    void updateRecipe() throws Exception {
+        Recipe changed = new Recipe(lasagne.getId(), "Lasagne Neu", "Noch besser", "lasagne.jpg", List.of());
+        when(recipeService.updateRecipe(eq(lasagne.getId()), any(Recipe.class))).thenReturn(changed);
+
+        mockMvc.perform(put("/api/recipes/recipe/" + lasagne.getId())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{ \"name\": \"Lasagne Neu\", \"description\": \"Noch besser\" }"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.name").value("Lasagne Neu"))
+                .andExpect(jsonPath("$.description").value("Noch besser"));
+    }
+
+    @Test
+    void updateUnknownRecipeReturns404() throws Exception {
+        when(recipeService.updateRecipe(any(UUID.class), any(Recipe.class))).thenReturn(null);
+
+        mockMvc.perform(put("/api/recipes/recipe/" + UUID.randomUUID())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{ \"name\": \"Gibt es nicht\" }"))
+                .andExpect(status().isNotFound());
     }
 }
