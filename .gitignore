@@ -1,0 +1,9 @@
+target/
+node_modules/
+.idea/
+*.iml
+.DS_Store
+public/
+test-results/
+playwright-report/
+KN05/load-tests/results.jtl
