@@ -1,0 +1,151 @@
+{
+  "info": {
+    "name": "Student API Tests",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8081"
+    }
+  ],
+  "item": [
+    {
+      "name": "Alle Studenten laden",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/students"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status ist 200', function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "pm.test('Antwort ist eine Liste', function () {",
+              "    pm.expect(pm.response.json()).to.be.an('array');",
+              "});",
+              "",
+              "pm.test('Jonas ist in der Liste', function () {",
+              "    const names = pm.response.json().map(s => s.name);",
+              "    pm.expect(names).to.include('Jonas');",
+              "});",
+              "",
+              "pm.test('Antwort ist schneller als 500ms', function () {",
+              "    pm.expect(pm.response.responseTime).to.be.below(500);",
+              "});",
+              "",
+              "pm.collectionVariables.set('countBefore', pm.response.json().length);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Neuen Studenten erstellen",
+      "request": {
+        "method": "POST",
+        "url": "{{baseUrl}}/students",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{ \"name\": \"Denis\", \"email\": \"denis@tbz.ch\" }"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status ist 200', function () {",
+              "    pm.response.to.have.status(200);",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Neuer Student ist gespeichert",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/students"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "const students = pm.response.json();",
+              "",
+              "pm.test('Liste hat einen Eintrag mehr', function () {",
+              "    pm.expect(students.length).to.eql(Number(pm.collectionVariables.get('countBefore')) + 1);",
+              "});",
+              "",
+              "pm.test('Denis hat die richtige E-Mail', function () {",
+              "    const denis = students.find(s => s.name === 'Denis');",
+              "    pm.expect(denis.email).to.eql('denis@tbz.ch');",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Ungueltige E-Mail gibt 400",
+      "request": {
+        "method": "POST",
+        "url": "{{baseUrl}}/students",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{ \"name\": \"Max\", \"email\": \"keine-email\" }"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status ist 400', function () {",
+              "    pm.response.to.have.status(400);",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Falsche URL gibt 404",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/gibtsnicht"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status ist 404', function () {",
+              "    pm.response.to.have.status(404);",
+              "});"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}
