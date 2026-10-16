@@ -3,7 +3,7 @@ node_modules/
 .idea/
 *.iml
 .DS_Store
-public/
+KN06/recipe/recipe-planner-backend/public/
 test-results/
 playwright-report/
 KN05/load-tests/results.jtl
