@@ -1,24 +1,5 @@
 # KN03 – Lösungen
 
-## Testlevels
-
-### Aufgabe 1 – Testen in der Firma
-
-- **Test Levels:** Unit-Tests schreiben wir selbst als Entwickler. Integrationstests laufen gegen eine Test-Datenbank. System- und Abnahmetests macht der Fachbereich bzw. der Kunde auf der Testumgebung.
-- **Wann wird getestet:** Unit- und Integrationstests laufen bei jedem Push automatisch in der Pipeline. Systemtests vor jedem Release, Abnahmetests vor dem Go-Live.
-- **QA-Team:** Kein grosses eigenes QA-Team. Ein Tester bzw. Product Owner prüft neue Features manuell.
-- **Testing Life Cycle:** Anforderung → Testfälle definieren → entwickeln + Unit-Tests → Code Review → Pipeline (Build + Tests) → Test auf Testumgebung → Abnahme → Deployment auf Produktion.
-
-### Aufgabe 2 – Begriffe einordnen
-
-| Begriff | Bedeutung | Beispiele |
-|---|---|---|
-| **Testing approach** | *Wie* wir grundsätzlich testen (Sicht auf das System) | White-Box, Black-Box, Grey-Box, manuell vs. automatisiert |
-| **Testing levels** | *Auf welcher Stufe* getestet wird | Unit, Component, Integration, System, Acceptance |
-| **Testing types, techniques and tactics** | *Was genau* und *mit welcher Technik* getestet wird | funktional, Performance, Last, Security, Usability, Regression, Grenzwertanalyse, Äquivalenzklassen |
-
-**Abhängigkeiten:** Der *Approach* bestimmt die Sicht. Jedes *Level* nutzt einen Approach, z.B. Unit = White-Box und Acceptance = Black-Box. Auf jedem Level werden passende *Types/Techniken* angewendet. Performance-Tests gehören z.B. meist zum Systemtest.
-
 ## Unit Testing
 
 ### Aufgabe 1 – Simpler Rechner
