@@ -10,6 +10,10 @@ mvn test
 - 25 Tests, alle grün
 - Coverage-Report: `target/site/jacoco/index.html`
 
+![Addressbook Tests](screenshots/addressbook-tests.png)
+
+![Addressbook Coverage](screenshots/addressbook-coverage.png)
+
 ## Aufgabe 1 – Tests für alle Klassen
 
 | Testklasse | Was wird getestet | Technik |

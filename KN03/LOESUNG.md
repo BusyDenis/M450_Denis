@@ -32,6 +32,8 @@ Ausführen:
 1. IntelliJ: Rechtsklick auf `CalculatorTest` → *Run*
 2. Kommandozeile: `cd calculator` und `mvn test`
 
+![Calculator Tests](screenshots/calculator-tests.png)
+
 ### Aufgabe 2 – JUnit Zusammenfassung
 
 Siehe [JUNIT_ZUSAMMENFASSUNG.md](JUNIT_ZUSAMMENFASSUNG.md)
@@ -51,6 +53,10 @@ mvn test
 
 - 40 Tests, alle grün
 - Coverage-Report (JaCoCo): `target/site/jacoco/index.html`
+
+![Bank Tests](screenshots/bank-tests.png)
+
+![Bank Coverage](screenshots/bank-coverage.png)
 
 | Klasse | Line Coverage |
 |---|---|

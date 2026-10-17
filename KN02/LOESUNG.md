@@ -38,11 +38,25 @@ Webseite: [www.sixt.ch](https://www.sixt.ch)
 
 | ID | Beschreibung | Erwartetes Resultat | Effektives Resultat | Status | Mögliche Ursache |
 |---|---|---|---|---|---|
-| 1 | Abholort "Zürich Flughafen", Datum heute + 3 Tage bis + 6 Tage eingeben und suchen | Liste mit verfügbaren Autos und Preisen für diesen Zeitraum wird angezeigt | Liste wird angezeigt | OK | – |
-| 2 | Rückgabedatum vor dem Abholdatum wählen | Rückgabedatum kann nicht gewählt werden oder eine Fehlermeldung erscheint | Datum ist im Kalender gesperrt | OK | – |
-| 3 | Auto auswählen und Zusatzoption "Kindersitz" hinzufügen | Gesamtpreis erhöht sich um den Preis des Kindersitzes | Preis erhöht sich korrekt | OK | – |
-| 4 | Buchungsformular ohne E-Mail-Adresse absenden | Fehlermeldung "E-Mail ist ein Pflichtfeld", Buchung wird nicht ausgeführt | Fehlermeldung erscheint | OK | – |
+| 1 | Abholort "Zürich Flughafen", Abholung 20. Okt., Rückgabe 26. Okt. eingeben und "Autos anzeigen" klicken | Liste mit verfügbaren Autos und Preisen für diesen Zeitraum wird angezeigt | Ort wird vorgeschlagen, Daten werden übernommen. Die Ergebnisliste wurde im automatisierten Testbrowser mit "Access denied" blockiert | Offen | Bot-Schutz von sixt.ch, im normalen Browser manuell prüfen |
+| 2 | Abholdatum 23. Okt. wählen, danach als Rückgabe den 20. Okt. anklicken | Rückgabe vor Abholung ist nicht möglich | Der 20. Okt. wird nicht als Rückgabe übernommen, sondern als neues Abholdatum gesetzt | OK | – |
+| 3 | Auto auswählen und Zusatzoption "Kindersitz" hinzufügen | Gesamtpreis erhöht sich um den Preis des Kindersitzes | Noch nicht getestet | Offen | Braucht die Ergebnisliste (siehe Test 1) |
+| 4 | Buchungsformular ohne E-Mail-Adresse absenden | Fehlermeldung "E-Mail ist ein Pflichtfeld", Buchung wird nicht ausgeführt | Noch nicht getestet | Offen | Braucht die Ergebnisliste (siehe Test 1) |
 | 5 | Buchung mit gültigen Daten abschliessen | Bestätigungsseite mit Buchungsnummer und Bestätigungs-E-Mail | Nicht durchgeführt (echte Buchung) | Offen | Test nur auf Testumgebung möglich |
+
+**Test 1 – Ort suchen und Daten eingeben**
+
+![Ort suchen](screenshots/sixt-1-ort-suche.png)
+
+![Suche ausgefüllt](screenshots/sixt-1-suche-ausgefuellt.png)
+
+**Test 2 – Abholung am 23. Okt. gewählt …**
+
+![Abholung 23. Okt.](screenshots/sixt-2-abholung-23-okt.png)
+
+**… Klick auf den 20. Okt. setzt ein neues Abholdatum statt einer Rückgabe vor der Abholung**
+
+![Klick auf 20. Okt.](screenshots/sixt-2-klick-auf-20-okt.png)
 
 ---
 
@@ -74,7 +88,7 @@ mvn compile exec:java -Dexec.mainClass=ch.tbz.bank.software.Main
 | B1 | Im Hauptmenü `a` eingeben | Alle 5 Konten werden aufgelistet | Alle Konten werden angezeigt | OK | – |
 | B2 | Konto `1` wählen, `e`, 100 einzahlen | Kontostand 1600.00 USD | 1600.00 USD | OK | – |
 | B3 | Konto 1, `a`, 5000 abheben | Meldung "Kontostand zu niedrig", Kontostand bleibt gleich | Meldung erscheint | OK | – |
-| B4 | Konto 1, `ü`, auf Konto 2 (EUR) 100 USD überweisen | Konto 1: -100 USD, Konto 2: +91 EUR | Konto 1: 1450 USD | OK | – |
+| B4 | Konto 1, `ü`, auf Konto 2 (EUR) 100 USD überweisen | Konto 1: -100 USD, Konto 2: +91 EUR | Konto 1: 1400 USD, Konto 2: 2091 EUR | OK | – |
 | B5 | Konto 2 (EUR), `ü`, auf Konto 3 (CHF) überweisen | Betrag wird in CHF umgerechnet | "Es wurde keine Umrechnung vorgenommen" | Fehler | EUR→CHF fehlt in `convertCurrency` |
 | B6 | Konto 1, `e`, -500 einzahlen | Fehlermeldung, negativer Betrag nicht erlaubt | Kontostand sinkt um 500 | Fehler | Keine Prüfung auf negative Beträge |
 | B7 | Konto 1, bei "Gewünschte Aktion" nur Enter drücken | Meldung "Ungültige Eingabe" | Programm stürzt ab (StringIndexOutOfBoundsException) | Fehler | `substring(0,1)` auf leeren String |
@@ -82,6 +96,28 @@ mvn compile exec:java -Dexec.mainClass=ch.tbz.bank.software.Main
 | B9 | Hauptmenü `e`, Name "Muster", Währung `GBP` | Konto wird mit USD erstellt, Hinweis erscheint | Hinweis erscheint, Konto mit USD | OK | – |
 | B10 | Konto 1, `l`, `j` | Konto 1 wird gelöscht und ist nicht mehr in der Liste | Konto wird gelöscht | OK | – |
 | B11 | Hauptmenü `w`, "CHF USD" | Aktueller Wechselkurs wird angezeigt | "1 CHF = 1.21 USD" | OK | – |
+
+Ausgaben in der Konsole (grün = Eingabe des Benutzers):
+
+**B1–B3:** Konten anzeigen, 100 einzahlen, zu viel abheben
+
+![B1 bis B3](screenshots/bank-b1-b3.png)
+
+**B5:** EUR → CHF überweisen, es wird nicht umgerechnet
+
+![B5](screenshots/bank-b5.png)
+
+**B6:** Negativer Betrag wird eingezahlt, Kontostand sinkt
+
+![B6](screenshots/bank-b6.png)
+
+**B7:** Leere Eingabe, Programm stürzt ab
+
+![B7](screenshots/bank-b7.png)
+
+**B11:** Wechselkurs abfragen
+
+![B11](screenshots/bank-b11.png)
 
 ### Methoden für White-Box Testfälle
 

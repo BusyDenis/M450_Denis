@@ -45,6 +45,8 @@ Getestete Fälle:
 
 Test 2, 4 und 5 schlagen fehl. Damit zeigt der Testtreiber die Fehler im Code.
 
+![Ausgabe Testtreiber](screenshots/testtreiber.png)
+
 ## Aufgabe 3 – Bonus: Der Fehler
 
 1. **Reihenfolge der if-Abfragen:** `extras >= 3` wird vor `extras >= 5` geprüft. Bei 5 Extras ist schon die erste Bedingung wahr, deshalb gibt es nie 15 % Rabatt.
