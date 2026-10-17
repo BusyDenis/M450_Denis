@@ -97,27 +97,85 @@ mvn compile exec:java -Dexec.mainClass=ch.tbz.bank.software.Main
 | B10 | Konto 1, `l`, `j` | Konto 1 wird gelöscht und ist nicht mehr in der Liste | Konto wird gelöscht | OK | – |
 | B11 | Hauptmenü `w`, "CHF USD" | Aktueller Wechselkurs wird angezeigt | "1 CHF = 1.21 USD" | OK | – |
 
-Ausgaben in der Konsole (grün = Eingabe des Benutzers):
+Ausgaben in der Konsole (nach dem Prompt steht jeweils die Eingabe des Benutzers):
 
 **B1–B3:** Konten anzeigen, 100 einzahlen, zu viel abheben
 
-![B1 bis B3](screenshots/bank-b1-b3.png)
+```
+Willkommen am Schalter 1!
+> Eingabe: a
+Nr. 1: Rockefeller (USD)
+Nr. 2: Gates (EUR)
+Nr. 3: Musk (CHF)
+Nr. 4: Bezos (EUR)
+Nr. 5: Branson (USD)
+> Eingabe: 1
+Kontonummer: 1
+Nachname: Rockefeller
+Kontostand: 1500.00 USD
+> Gewünschte Aktion: e
+> Welchen Betrag möchten Sie einzahlen (USD)? 100
+Aktueller Kontostand: 1600.00 USD
+> Gewünschte Aktion: a
+> Welchen Betrag möchten Sie abheben (USD)? 5000
+! Kontostand zu niedrig (momentan 1600.0 USD).
+> Welchen Betrag möchten Sie abheben (USD)? 50
+Aktueller Kontostand: 1550.00 USD
+```
 
 **B5:** EUR → CHF überweisen, es wird nicht umgerechnet
 
-![B5](screenshots/bank-b5.png)
+```
+> Eingabe: 2
+Kontonummer: 2
+Nachname: Gates
+Kontostand: 2000.00 EUR
+> Gewünschte Aktion: ü
+> Auf welches Konto soll überwiesen werden?:
+Nr. 1: Rockefeller
+Nr. 3: Musk
+Nr. 4: Bezos
+Nr. 5: Branson
+> Eingabe: 3
+> Welchen Betrag möchten Sie überweisen (EUR)? 100
+! Es wurde keine Umrechnung vorgenommen.
+Neuer Kontostand: 1900.00 EUR
+```
 
 **B6:** Negativer Betrag wird eingezahlt, Kontostand sinkt
 
-![B6](screenshots/bank-b6.png)
+```
+> Eingabe: 1
+Kontonummer: 1
+Nachname: Rockefeller
+Kontostand: 1500.00 USD
+> Gewünschte Aktion: e
+> Welchen Betrag möchten Sie einzahlen (USD)? -500
+Aktueller Kontostand: 1000.00 USD
+```
 
 **B7:** Leere Eingabe, Programm stürzt ab
 
-![B7](screenshots/bank-b7.png)
+```
+> Eingabe: 1
+Kontonummer: 1
+Nachname: Rockefeller
+Kontostand: 1500.00 USD
+> Gewünschte Aktion: (Enter)
+Exception in thread "main" java.lang.StringIndexOutOfBoundsException: Range [0, 1) out of bounds for length 0
+    ...
+    at java.base/java.lang.String.substring(String.java:2823)
+    at ch.tbz.bank.software.Counter.editAccount(Counter.java:105)
+    at ch.tbz.bank.software.Main.main(Main.java:31)
+```
 
 **B11:** Wechselkurs abfragen
 
-![B11](screenshots/bank-b11.png)
+```
+> Eingabe: w
+> Bitte zwei Währungskürzel eingeben (z. Bsp. "CHF USD" für von CHF zu USD): CHF USD
+1 CHF = 1.210754 USD
+```
 
 ### Methoden für White-Box Testfälle
 

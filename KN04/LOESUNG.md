@@ -10,7 +10,21 @@ mvn test
 - 25 Tests, alle grün
 - Coverage-Report: `target/site/jacoco/index.html`
 
-![Addressbook Tests](screenshots/addressbook-tests.png)
+```
+$ mvn test
+Running ch.tbz.m450.AddressbookApplicationTest
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0 - ch.tbz.m450.AddressbookApplicationTest
+Running ch.tbz.m450.controller.AddressControllerTest
+Tests run: 4, Failures: 0, Errors: 0, Skipped: 0 - ch.tbz.m450.controller.AddressControllerTest
+Running ch.tbz.m450.repository.AddressTest
+Tests run: 3, Failures: 0, Errors: 0, Skipped: 0 - ch.tbz.m450.repository.AddressTest
+Running ch.tbz.m450.service.AddressServiceTest
+Tests run: 6, Failures: 0, Errors: 0, Skipped: 0 - ch.tbz.m450.service.AddressServiceTest
+Running ch.tbz.m450.util.AddressComparatorTest
+Tests run: 11, Failures: 0, Errors: 0, Skipped: 0 - ch.tbz.m450.util.AddressComparatorTest
+Tests run: 25, Failures: 0, Errors: 0, Skipped: 0
+BUILD SUCCESS
+```
 
 ![Addressbook Coverage](screenshots/addressbook-coverage.png)
 

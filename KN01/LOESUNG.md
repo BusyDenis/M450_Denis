@@ -45,7 +45,25 @@ Getestete Fälle:
 
 Test 2, 4 und 5 schlagen fehl. Damit zeigt der Testtreiber die Fehler im Code.
 
-![Ausgabe Testtreiber](screenshots/testtreiber.png)
+```
+$ javac *.java
+$ java PriceCalculatorTest
+=== Original Code ===
+OK     Test 1: nur Grundpreis -> erwartet 10000.0, erhalten 10000.0
+FEHLER Test 2: Haendlerrabatt, 2 Extras -> erwartet 10500.0, erhalten 10400.0
+OK     Test 3: 3 Extras = 10% Rabatt -> erwartet 10900.0, erhalten 10900.0
+FEHLER Test 4: 5 Extras = 15% Rabatt -> erwartet 10850.0, erhalten 10900.0
+FEHLER Test 5: Haendlerrabatt hoeher als Zubehoerrabatt -> erwartet 8900.0, erhalten 8800.0
+Es gibt fehlgeschlagene Tests
+
+=== Korrigierter Code ===
+OK     Test 1: nur Grundpreis -> erwartet 10000.0, erhalten 10000.0
+OK     Test 2: Haendlerrabatt, 2 Extras -> erwartet 10500.0, erhalten 10500.0
+OK     Test 3: 3 Extras = 10% Rabatt -> erwartet 10900.0, erhalten 10900.0
+OK     Test 4: 5 Extras = 15% Rabatt -> erwartet 10850.0, erhalten 10850.0
+OK     Test 5: Haendlerrabatt hoeher als Zubehoerrabatt -> erwartet 8900.0, erhalten 8900.0
+Alle Tests bestanden
+```
 
 ## Aufgabe 3 – Bonus: Der Fehler
 

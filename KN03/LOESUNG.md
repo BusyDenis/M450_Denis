@@ -32,7 +32,13 @@ Ausführen:
 1. IntelliJ: Rechtsklick auf `CalculatorTest` → *Run*
 2. Kommandozeile: `cd calculator` und `mvn test`
 
-![Calculator Tests](screenshots/calculator-tests.png)
+```
+$ mvn test
+Running ch.tbz.calculator.CalculatorTest
+Tests run: 14, Failures: 0, Errors: 0, Skipped: 0 - ch.tbz.calculator.CalculatorTest
+Tests run: 14, Failures: 0, Errors: 0, Skipped: 0
+BUILD SUCCESS
+```
 
 ### Aufgabe 2 – JUnit Zusammenfassung
 
@@ -54,7 +60,23 @@ mvn test
 - 40 Tests, alle grün
 - Coverage-Report (JaCoCo): `target/site/jacoco/index.html`
 
-![Bank Tests](screenshots/bank-tests.png)
+```
+$ mvn test
+Running ch.schule.bank.junit5.AccountTests
+Tests run: 9, Failures: 0, Errors: 0, Skipped: 0 - ch.schule.bank.junit5.AccountTests
+Running ch.schule.bank.junit5.BankTests
+Tests run: 14, Failures: 0, Errors: 0, Skipped: 0 - ch.schule.bank.junit5.BankTests
+Running ch.schule.bank.junit5.BookingTests
+Tests run: 5, Failures: 0, Errors: 0, Skipped: 0 - ch.schule.bank.junit5.BookingTests
+Running ch.schule.bank.junit5.PromoYouthSavingsAccountTests
+Tests run: 5, Failures: 0, Errors: 0, Skipped: 0 - ch.schule.bank.junit5.PromoYouthSavingsAccountTests
+Running ch.schule.bank.junit5.SalaryAccountTests
+Tests run: 4, Failures: 0, Errors: 0, Skipped: 0 - ch.schule.bank.junit5.SalaryAccountTests
+Running ch.schule.bank.junit5.SavingsAccountTests
+Tests run: 3, Failures: 0, Errors: 0, Skipped: 0 - ch.schule.bank.junit5.SavingsAccountTests
+Tests run: 40, Failures: 0, Errors: 0, Skipped: 0
+BUILD SUCCESS
+```
 
 ![Bank Coverage](screenshots/bank-coverage.png)
 
