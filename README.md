@@ -12,7 +12,3 @@
 | KN08 | Test Driven Development | [LOESUNG.md](KN08/LOESUNG.md) |
 
 Präsentationen pro KN: `KNxx/praesentation/KNxx.pptx`
-
-## KI-Nutzung
-
-Die Lösungen wurden mit Hilfe eines KI-Agenten (Claude Code) erstellt, mit Erlaubnis der Lehrperson.
