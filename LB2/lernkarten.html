@@ -1,0 +1,848 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>M450 LB2 Lernkarten</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=IBM+Plex+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: one reading column; a sticky tab bar switches between Theorie, Quiz, Code, Videos. Test-runner vocabulary (green/red) carries the subject. */
+:root {
+  --bg: #f3f5f8;
+  --surface: #ffffff;
+  --fg: #15202c;
+  --muted: #5b6878;
+  --line: #d8dfe7;
+  --accent: #3247c4;
+  --accent-soft: #e5e9fa;
+  --pass: #1d7f46;
+  --pass-soft: #e1f2e8;
+  --fail: #b8352d;
+  --fail-soft: #f9e5e3;
+  --warn: #8f5d00;
+  --warn-soft: #f8eed6;
+  --code-bg: #eef1f6;
+  --font-display: "Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --font-body: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", Consolas, "Courier New", monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0f141b; --surface: #171e28; --fg: #e4eaf1; --muted: #9aa7b6; --line: #2a3442;
+    --accent: #8d9cff; --accent-soft: #222a52; --pass: #55c487; --pass-soft: #14301f;
+    --fail: #ff7d72; --fail-soft: #3a1c1a; --warn: #f0b64a; --warn-soft: #382b10; --code-bg: #1e2733;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0f141b; --surface: #171e28; --fg: #e4eaf1; --muted: #9aa7b6; --line: #2a3442;
+  --accent: #8d9cff; --accent-soft: #222a52; --pass: #55c487; --pass-soft: #14301f;
+  --fail: #ff7d72; --fail-soft: #3a1c1a; --warn: #f0b64a; --warn-soft: #382b10; --code-bg: #1e2733;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--fg); font-family: var(--font-body); font-size: 16px; line-height: 1.55; }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--bg); }
+.wrap { max-width: 880px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+h1, h2, h3 { font-family: var(--font-display); text-wrap: balance; line-height: 1.15; margin: 0; }
+h1 { font-size: clamp(2rem, 6vw, 2.9rem); letter-spacing: -0.01em; }
+h2 { font-size: 1.55rem; }
+h3 { font-size: 1.08rem; margin-top: 4px; }
+p { margin: 0; }
+code, pre, .mono { font-family: var(--font-mono); font-size: 0.86em; }
+code { background: var(--code-bg); padding: 1px 5px; border-radius: 4px; }
+pre { background: var(--code-bg); padding: 12px 14px; border-radius: 8px; overflow-x: auto; margin: 0; line-height: 1.5; }
+pre code { background: none; padding: 0; font-size: 1em; }
+a { color: var(--accent); }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+header.top { padding-block: 36px 20px; display: grid; gap: 14px; }
+.eyebrow { font-family: var(--font-mono); font-size: 0.78rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+.runline { font-family: var(--font-mono); font-size: 0.85rem; display: flex; flex-wrap: wrap; gap: 6px 14px; padding: 10px 14px; border-radius: 8px; background: var(--surface); border: 1px solid var(--line); }
+.runline .ok { color: var(--pass); font-weight: 500; }
+.runline .bad { color: var(--fail); font-weight: 500; }
+.plan { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 10px; }
+.plan div { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; font-size: 0.92rem; min-width: 0; }
+.plan b { display: block; font-family: var(--font-mono); font-size: 0.75rem; color: var(--accent); letter-spacing: 0.05em; text-transform: uppercase; font-weight: 500; }
+
+nav.tabs { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--bg); border-bottom: 1px solid var(--line); }
+nav.tabs .wrap { display: flex; gap: 4px; overflow-x: auto; }
+nav.tabs button { font: 600 0.95rem var(--font-body); color: var(--muted); background: none; border: 0; border-bottom: 3px solid transparent; padding: 12px 12px 10px; cursor: pointer; white-space: nowrap; }
+nav.tabs button[aria-selected="true"] { color: var(--fg); border-bottom-color: var(--accent); }
+main { padding-block: 24px 64px; }
+section.view { display: grid; gap: 22px; }
+
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip { font: 500 0.85rem var(--font-body); padding: 5px 11px; border-radius: 999px; border: 1px solid var(--line); background: var(--surface); color: var(--fg); cursor: pointer; }
+.chip[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--surface); }
+.chip .n { font-family: var(--font-mono); font-size: 0.75rem; opacity: 0.75; margin-left: 4px; }
+
+article.topic { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 20px; display: grid; gap: 12px; scroll-margin-top: 64px; }
+article.topic header { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+.idx { font-family: var(--font-mono); font-size: 0.8rem; color: var(--accent); }
+ul, ol { margin: 0; padding-left: 1.25em; display: grid; gap: 4px; }
+.tbl { overflow-x: auto; }
+table { border-collapse: collapse; width: 100%; font-size: 0.9rem; }
+th, td { text-align: left; padding: 7px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { font-weight: 600; color: var(--muted); font-size: 0.8rem; letter-spacing: 0.03em; text-transform: uppercase; }
+.two { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; }
+.two > * { min-width: 0; }
+.box { border-radius: 8px; padding: 12px 14px; background: var(--code-bg); }
+.box.pass { background: var(--pass-soft); }
+.box.fail { background: var(--fail-soft); }
+.box.warn { background: var(--warn-soft); }
+.box b.lbl { display: block; font-family: var(--font-mono); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 4px; }
+.box.pass b.lbl { color: var(--pass); } .box.fail b.lbl { color: var(--fail); } .box.warn b.lbl { color: var(--warn); }
+.rgr { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.rgr div { border-radius: 8px; padding: 10px 12px; font-size: 0.9rem; min-width: 0; }
+.rgr .r { background: var(--fail-soft); } .rgr .g { background: var(--pass-soft); } .rgr .f { background: var(--accent-soft); }
+.rgr strong { display: block; font-family: var(--font-display); font-size: 1.1rem; }
+@media (max-width: 560px) { .rgr { grid-template-columns: 1fr; } }
+.hint { color: var(--muted); font-size: 0.9rem; }
+
+/* Quiz */
+.quizbar { display: grid; gap: 10px; }
+.progress { height: 8px; border-radius: 99px; background: var(--line); overflow: hidden; }
+.progress i { display: block; height: 100%; background: var(--pass); width: 0; transition: width .25s; }
+.progress-label { font-family: var(--font-mono); font-size: 0.82rem; color: var(--muted); display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 22px; display: grid; gap: 16px; min-height: 260px; align-content: start; }
+.card .meta { display: flex; justify-content: space-between; gap: 10px; font-family: var(--font-mono); font-size: 0.78rem; color: var(--muted); flex-wrap: wrap; }
+.card .q { font-size: 1.15rem; font-weight: 500; display: grid; gap: 10px; }
+.card .a { border-top: 1px dashed var(--line); padding-top: 14px; display: grid; gap: 8px; }
+.actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.btn { font: 600 0.95rem var(--font-body); padding: 10px 16px; border-radius: 8px; border: 1px solid var(--line); background: var(--surface); color: var(--fg); cursor: pointer; }
+.btn.primary { background: var(--accent); border-color: var(--accent); color: var(--surface); }
+.btn.ok { background: var(--pass-soft); border-color: var(--pass); color: var(--pass); }
+.btn.no { background: var(--fail-soft); border-color: var(--fail); color: var(--fail); }
+.btn.ghost { background: none; }
+.kbd { font-family: var(--font-mono); font-size: 0.75rem; opacity: 0.7; margin-left: 6px; }
+.toggle { display: inline-flex; align-items: center; gap: 6px; font-size: 0.9rem; cursor: pointer; }
+
+/* Videos */
+.kn { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 16px 18px; display: grid; gap: 10px; }
+.kn header { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; }
+.kn h3 { margin: 0; }
+.pill { font-family: var(--font-mono); font-size: 0.74rem; padding: 3px 9px; border-radius: 99px; white-space: nowrap; }
+.pill.pass { background: var(--pass-soft); color: var(--pass); }
+.pill.warn { background: var(--warn-soft); color: var(--warn); }
+.checks { display: flex; gap: 16px; flex-wrap: wrap; font-size: 0.9rem; }
+.copyrow { position: relative; }
+.kn .copyrow pre { padding-top: 34px; }
+.copy { position: absolute; top: 6px; right: 6px; font: 500 0.75rem var(--font-body); padding: 3px 8px; border-radius: 6px; border: 1px solid var(--line); background: var(--surface); color: var(--muted); cursor: pointer; }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+
+<header class="top wrap">
+  <div class="eyebrow">Modul 450 · Applikationen testen · TBZ</div>
+  <h1>LB2 Lernkarten</h1>
+  <div class="runline" aria-label="Eckdaten der Prüfung">
+    <span>LB2</span><span>Di 27.10.2026</span><span>2. Lektion</span><span>35 min</span><span class="bad">keine Unterlagen</span><span>25 % der Modulnote</span>
+  </div>
+  <div class="plan">
+    <div><b>Heute 1</b>Theorie lesen, alle 8 Themen. Ca. 60 min.</div>
+    <div><b>Heute 2</b>Quiz, bis alle Karten grün sind. Ca. 45 min.</div>
+    <div><b>Heute 3</b>Code-Übungen A1–A6 im Projekt LB2-Training. Ca. 60 min.</div>
+    <div><b>Morgen früh</b>Nur noch die Karten „Nochmal“ und den Code-Spickzettel.</div>
+  </div>
+</header>
+
+<nav class="tabs" aria-label="Bereiche">
+  <div class="wrap" role="tablist">
+    <button role="tab" id="tab-theorie" data-view="theorie" aria-selected="true">Theorie</button>
+    <button role="tab" id="tab-quiz" data-view="quiz" aria-selected="false">Quiz</button>
+    <button role="tab" id="tab-code" data-view="code" aria-selected="false">Code</button>
+    <button role="tab" id="tab-videos" data-view="videos" aria-selected="false">Videos</button>
+  </div>
+</nav>
+
+<main class="wrap">
+
+<!-- ============ THEORIE ============ -->
+<section class="view" id="view-theorie">
+  <div class="chips" id="topicJump" aria-label="Zu Thema springen"></div>
+
+  <article class="topic" id="t-G">
+    <header><span class="idx">1 / 8</span><h2>Grundlagen &amp; Vorgehensmodelle</h2></header>
+    <div class="two">
+      <div class="box fail"><b class="lbl">Fehler</b>Eine Anforderung wird nicht erfüllt: <strong>IST ≠ SOLL</strong>. Beispiel: 3 × 10 CHF ergibt 20 CHF.</div>
+      <div class="box warn"><b class="lbl">Mangel</b>Anforderung oder berechtigte Erwartung wird nicht <strong>angemessen</strong> erfüllt. Beispiel: Rechnung stimmt, wird aber als 30.000000001 angezeigt.</div>
+    </div>
+    <ul>
+      <li><strong>Fehlermaskierung:</strong> Ein Fehler wird von einem anderen Programmteil ausgeglichen und ist deshalb nicht sichtbar. Er zeigt sich erst, wenn der andere Teil korrigiert wird, oder später (z.B. falsch gespeicherte Daten).</li>
+      <li><strong>Vollständiges Testen ist unmöglich:</strong> Testen kann Fehlerfreiheit nicht beweisen. Es gibt zu viele Kombinationen von Eingaben und Randbedingungen.</li>
+      <li><strong>Gute Testfälle:</strong> hohe Wahrscheinlichkeit, Fehler zu finden · keine Redundanz · unabhängig voneinander · decken möglichst viel Code ab.</li>
+      <li><strong>Testaufwand:</strong> muss zum möglichen Schaden passen. Hoher Schaden (Geld, Menschenleben) → mehr testen. Beispiele: Ariane 5, Therac-25.</li>
+      <li><strong>Testabdeckung (Code Coverage):</strong> wie viel vom Code die Tests ausführen (Zeilen, Verzweigungen). Tools: JaCoCo, IntelliJ „Run with Coverage“. 100 % heisst nicht fehlerfrei.</li>
+    </ul>
+    <h3>V-Modell</h3>
+    <p>Erweiterung vom Wasserfall. Im Wasserfall kommt das Testen am Schluss, im V-Modell ist Testen gleichwertig mit Entwickeln und läuft parallel. Jede Entwurfsstufe links hat rechts ihre Teststufe.</p>
+    <div class="tbl"><table>
+      <thead><tr><th>Linker Ast (Entwurf)</th><th>Rechter Ast (Test)</th><th>Wer</th></tr></thead>
+      <tbody>
+        <tr><td>Anforderungsdefinition</td><td>Abnahmetest</td><td>Kunde</td></tr>
+        <tr><td>Funktionaler Systementwurf</td><td>Systemtest</td><td>Testteam</td></tr>
+        <tr><td>Technischer Systementwurf</td><td>Integrationstest</td><td>Tester / QA</td></tr>
+        <tr><td>Komponentenspezifikation</td><td>Komponententest</td><td>Entwickler</td></tr>
+        <tr><td colspan="3">Unten in der Spitze: Programmierung</td></tr>
+      </tbody>
+    </table></div>
+    <p><strong>Scrum:</strong> iterativ, nach jeder Definition of Done entsteht ein Inkrement, das shippable ist. Darum braucht es wiederverwendbare, <strong>automatisierte</strong> Tests, die bei jedem Inkrement wieder laufen.</p>
+  </article>
+
+  <article class="topic" id="t-S">
+    <header><span class="idx">2 / 8</span><h2>Teststrategie</h2></header>
+    <p><strong>4 Elemente:</strong> Testobjekte · was getestet wird (Testfälle) · Testmethode (wie) · Testinfrastruktur / Testumgebung.</p>
+    <ul>
+      <li><strong>Testobjekt:</strong> die Komponente, die getestet wird (Klasse, Modul, Skript, DB-Skript). Beispiel: nur die Rechnungs-Komponente einer Autovermietung.</li>
+      <li><strong>Testfälle</strong> sind das Herzstück des Testkonzepts. Man leitet sie oft aus den Anforderungen ab.</li>
+    </ul>
+    <div class="two">
+      <div class="box"><b class="lbl">Funktional = WAS</b>Tut die Software, was der Kunde verlangt? Beispiel: Login mit richtigen Daten klappt.</div>
+      <div class="box"><b class="lbl">Nicht-funktional = WIE</b>Performance, Sicherheit, Usability, Skalierbarkeit. Beispiel: Seite lädt unter 2 Sekunden.</div>
+      <div class="box"><b class="lbl">Abstrakt</b>Logische Operatoren statt Werte. <code>P &lt; 15'000 → 0 %</code></div>
+      <div class="box"><b class="lbl">Konkret</b>Echte Ein- und Ausgabewerte. <code>14'999.95 → 0 %</code>, <code>15'000 → 5 %</code></div>
+    </div>
+    <div class="tbl"><table>
+      <thead><tr><th></th><th>White-Box</th><th>Black-Box</th></tr></thead>
+      <tbody>
+        <tr><td>Code</td><td>sichtbar, Code-Pfade testen</td><td>unbekannt, nur Spezifikation</td></tr>
+        <tr><td>Wo</td><td>meist Unit-Ebene</td><td>System, Abnahme</td></tr>
+        <tr><td>Wer</td><td>Entwickler</td><td>Testteam, Benutzer</td></tr>
+      </tbody>
+    </table></div>
+    <p class="hint">Grenzwerte testen (15'000, 20'000, 25'000): dort passieren die meisten Fehler, z.B. <code>&lt;</code> statt <code>&lt;=</code>.</p>
+  </article>
+
+  <article class="topic" id="t-L">
+    <header><span class="idx">3 / 8</span><h2>Testlevels</h2></header>
+    <p>Reihenfolge: <strong>Unit → Component → Integration → System → Acceptance</strong>. Jede Stufe ist langsamer und kommt später im Prozess. Unit-, Component- (und teils Integrationstests) laufen beim Build.</p>
+    <div class="tbl"><table>
+      <thead><tr><th>Level</th><th>Wer</th><th>Box</th><th>Was</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Unit</strong></td><td>Entwickler</td><td>White</td><td>Eine Klasse/Methode isoliert. Schnell, gibt Sicherheit fürs Refactoring, vor allem funktional. Grenze: isoliert ok heisst nicht, dass es zusammen funktioniert.</td></tr>
+        <tr><td><strong>Component</strong></td><td>Entwickler</td><td>White</td><td>Zusammenspiel mehrerer Komponenten. Schnittstellen (DB, externe APIs, Message Queues) werden <strong>gemockt</strong>.</td></tr>
+        <tr><td><strong>Integration</strong></td><td>Tester / QA (teils Entwickler)</td><td>Black + White</td><td>DB, APIs, Queues werden <strong>echt</strong> benutzt, nicht mehr gemockt.</td></tr>
+        <tr><td><strong>System</strong></td><td>gleiche Teams wie Integration</td><td>Black</td><td>Ganze Software in einer Live-nahen Umgebung. Funktional + nicht-funktional: Load, Stress, Usability, Security.</td></tr>
+        <tr><td><strong>Acceptance</strong></td><td>Kunde / Business</td><td>Black</td><td>Erfüllt das System die Akzeptanzkriterien? (UAT)</td></tr>
+      </tbody>
+    </table></div>
+    <ul>
+      <li><strong>Load Testing:</strong> Verhalten bei einer festgelegten Anzahl Requests. <strong>Stress Testing:</strong> das Limit der Software finden.</li>
+      <li>Abkürzungen: UAT = User Acceptance Testing, QA = Quality Assurance, SLA = Service Level Agreement.</li>
+    </ul>
+  </article>
+
+  <article class="topic" id="t-U">
+    <header><span class="idx">4 / 8</span><h2>Unit Testing (JUnit 5)</h2></header>
+    <div class="two">
+      <div><h3>Rolle von Unit-Tests</h3><ul>
+        <li>steuern eher das Design, als Fehler zu finden</li>
+        <li>halten Code langfristig änderbar</li>
+        <li>Voraussetzung fürs Refactoring</li>
+        <li>decken versehentliche Änderungen sofort auf</li>
+        <li>dokumentieren das System</li></ul></div>
+      <div><h3>Gute Unit-Tests</h3><ul>
+        <li>isoliert, Reihenfolge egal</li>
+        <li>prüfen genau eine Eigenschaft</li>
+        <li>vollautomatisch, schnell, wiederholbar</li>
+        <li>kurz und verständlich, gleiche Codequalität wie Produktivcode</li>
+        <li>testen relevanten Code (keine Getter/Setter)</li>
+        <li>idealerweise vor dem Code geschrieben (TDD)</li></ul></div>
+    </div>
+    <p class="hint">F.I.R.S.T.: Fast, Independent, Repeatable, Self-validating, Timely.</p>
+    <div class="tbl"><table>
+      <thead><tr><th>Annotation</th><th>Bedeutung</th></tr></thead>
+      <tbody>
+        <tr><td><code>@Test</code></td><td>Methode ist ein Test</td></tr>
+        <tr><td><code>@BeforeEach</code> / <code>@AfterEach</code></td><td>vor / nach <strong>jedem</strong> Test</td></tr>
+        <tr><td><code>@BeforeAll</code> / <code>@AfterAll</code></td><td><strong>einmal</strong> vor / nach allen Tests, Methode muss <code>static</code> sein</td></tr>
+        <tr><td><code>@DisplayName("...")</code></td><td>lesbarer Name im Report</td></tr>
+        <tr><td><code>@Disabled</code></td><td>Test wird übersprungen</td></tr>
+        <tr><td><code>@ParameterizedTest</code></td><td>gleicher Test mit vielen Werten, zusammen mit <code>@CsvSource</code> / <code>@ValueSource</code></td></tr>
+        <tr><td><code>@Nested</code> · <code>@Tag</code> · <code>@Timeout</code></td><td>Gruppen · markieren · max. Laufzeit</td></tr>
+      </tbody>
+    </table></div>
+    <div class="tbl"><table>
+      <thead><tr><th>Assertion</th><th>Prüft</th></tr></thead>
+      <tbody>
+        <tr><td><code>assertEquals(expected, actual)</code></td><td>gleich. Reihenfolge: <strong>erwartet zuerst</strong></td></tr>
+        <tr><td><code>assertEquals(0.3, x, 0.0001)</code></td><td>Kommazahlen mit Toleranz (delta)</td></tr>
+        <tr><td><code>assertTrue</code> / <code>assertFalse</code></td><td>Bedingung</td></tr>
+        <tr><td><code>assertNull</code> / <code>assertNotNull</code></td><td>null oder nicht</td></tr>
+        <tr><td><code>assertSame</code></td><td>genau dasselbe Objekt (Referenz)</td></tr>
+        <tr><td><code>assertThrows(X.class, () -&gt; ...)</code></td><td>Exception wird geworfen</td></tr>
+        <tr><td><code>assertAll(...)</code></td><td>alle Prüfungen laufen, Fehler gesammelt</td></tr>
+        <tr><td><code>fail("...")</code></td><td>schlägt immer fehl</td></tr>
+      </tbody>
+    </table></div>
+    <pre><code>@ParameterizedTest
+@CsvSource({ "1, 1, 2", "10, -5, 5" })      // 2 Zeilen = 2 Durchläufe
+void add(double a, double b, double expected) {   // Spalten der Reihe nach
+    assertEquals(expected, calculator.add(a, b));
+}</code></pre>
+  </article>
+
+  <article class="topic" id="t-D">
+    <header><span class="idx">5 / 8</span><h2>Schnittstellen &amp; Test Doubles</h2></header>
+    <p>Ein <strong>Test Double</strong> ersetzt im Test etwas Echtes, wie ein Stunt-Double. Damit schaltet man Abhängigkeiten aus, die im Test nicht interessieren. SUT = System under Test.</p>
+    <div class="two">
+      <div class="box"><b class="lbl">Mock (mock, spy)</b><strong>Behavioral testing.</strong> Prüft, ob das SUT ihn richtig aufgerufen hat.</div>
+      <div class="box"><b class="lbl">Stub (stub, dummy, fake)</b><strong>State testing.</strong> Liefert Daten ans SUT, danach prüft man das Ergebnis.</div>
+    </div>
+    <div class="tbl"><table>
+      <thead><tr><th>Double</th><th>Was es macht</th><th>Beispiel</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Mock</strong></td><td>Erwartungen setzen, SUT aufrufen, prüfen ob die Methode aufgerufen wurde</td><td><code>verify(repo).save(a)</code></td></tr>
+        <tr><td><strong>Spy</strong></td><td>zeichnet still alle Aufrufe auf, du prüfst danach selbst</td><td>Mockito <code>spy(...)</code></td></tr>
+        <tr><td><strong>Dummy</strong></td><td>wird nur übergeben (z.B. Konstruktor füllen), keine Methoden</td><td><code>null</code> als Parameter</td></tr>
+        <tr><td><strong>Stub</strong></td><td>vordefinierte, hardcodierte Antworten</td><td><code>when(repo.findAll()).thenReturn(list)</code></td></tr>
+        <tr><td><strong>Fake</strong></td><td>funktionierende, vereinfachte Implementierung</td><td>In-Memory-Repository statt DB</td></tr>
+      </tbody>
+    </table></div>
+    <div class="two">
+      <div><h3>Lifecycle Stub</h3><ol><li>Setup (Objekt + Stubs)</li><li>Anwenden</li><li>Verify state</li><li>Teardown</li></ol></div>
+      <div><h3>Lifecycle Mock</h3><ol><li>Daten einrichten</li><li><strong>Setup expectations</strong></li><li>Anwenden</li><li><strong>Verify expectations</strong></li><li>Verify state</li><li>Teardown</li></ol></div>
+    </div>
+    <p>Frameworks: <strong>Mockito</strong> (kann Mock, Spy, Stub, Dummy), <strong>WireMock</strong> (HTTP-Mock-Server, um APIs zu mocken).</p>
+  </article>
+
+  <article class="topic" id="t-A">
+    <header><span class="idx">6 / 8</span><h2>Automation Testing</h2></header>
+    <div class="tbl"><table>
+      <thead><tr><th>Automatisiert</th><th>Manuell</th></tr></thead>
+      <tbody>
+        <tr><td>zuverlässig, jeder Test ist programmiert</td><td>unzuverlässig, menschliche Fehler</td></tr>
+        <tr><td>grosser Initialaufwand, langfristig billiger</td><td>kleiner Initialaufwand, kleinerer ROI auf Dauer</td></tr>
+        <tr><td>ideal für Regression Testing</td><td>gut, wenn Tests nicht wiederholt werden</td></tr>
+        <tr><td>Knopfdruck oder Trigger</td><td>braucht viele Mitarbeiter-Stunden</td></tr>
+        <tr><td>exploratives Testen <strong>nicht</strong> möglich</td><td>exploratives Testen möglich</td></tr>
+        <tr><td>Performance-Tests möglich</td><td>Performance-Tests <strong>nicht</strong> möglich</td></tr>
+        <tr><td>parallel ausführbar</td><td>parallel braucht mehr Leute</td></tr>
+        <tr><td>braucht Programmier-Skills, Tools teils teuer</td><td>braucht wenig Wissen</td></tr>
+      </tbody>
+    </table></div>
+    <div class="two">
+      <div><h3>Verbessert</h3><ul><li>Effizienz</li><li>Test Coverage</li><li>Ausführungszeit</li></ul></div>
+      <div><h3>Erfolgsfaktoren</h3><ul><li>richtiges Tool</li><li>Testprozess definieren und einhalten</li><li>Testing-Team</li><li>manuell und automatisch aufeinander abgestimmt</li></ul></div>
+    </div>
+    <p><strong>Schritte:</strong> Tool wählen → Scope definieren → Testfälle planen, definieren, implementieren → ausführen → warten (Maintenance).</p>
+    <ul>
+      <li><strong>Functional:</strong> gibt Input X den richtigen Output? (Login klappt)</li>
+      <li><strong>Non-functional:</strong> Skalierbarkeit, Stress, Sicherheit</li>
+      <li><strong>Smoke / Sanity:</strong> minimal, nur das Wichtigste: läuft es überhaupt?</li>
+      <li><strong>Regression:</strong> nach einer Änderung prüfen, ob alte Funktionen noch gehen. Meist der grösste Testaufwand.</li>
+      <li><strong>Keyword-driven / Data-driven</strong></li>
+    </ul>
+    <div class="tbl"><table>
+      <tbody>
+        <tr><th>Für Tester</th><td>Selenium, HP UFT, Zephyr, Eggplant, TestRail, TestComplete</td></tr>
+        <tr><th>API</th><td>Postman, Swagger, SoapUI</td></tr>
+        <tr><th>Backend</th><td>JMeter, JUnit, TestNG, Mockito, Cucumber</td></tr>
+        <tr><th>UI / E2E</th><td>Cypress, Playwright, Puppeteer, Jest, Jasmine, Protractor</td></tr>
+      </tbody>
+    </table></div>
+  </article>
+
+  <article class="topic" id="t-C">
+    <header><span class="idx">7 / 8</span><h2>Code Reviews</h2></header>
+    <p>Code Review = <strong>Vier-Augen-Prinzip</strong>: eine zweite Person prüft jede Implementierung, stellt Fragen, korrigiert und gibt am Schluss ihr OK. Pull Request (GitHub, Bitbucket) heisst bei GitLab <strong>Merge Request</strong>. Das ist eine Konvention der Hosting-Dienste, kein Git-Feature.</p>
+    <h3>Ablauf</h3>
+    <ol>
+      <li>Feature-Branch erstellen: <code>git checkout -b feature</code></li>
+      <li>Implementieren, <code>git add .</code>, <code>git commit -m "..."</code></li>
+      <li>Pushen: <code>git push --set-upstream origin feature</code></li>
+      <li>PR erstellen: Titel, Beschreibung, Reviewer wählen</li>
+      <li>Review: Kommentare, diskutieren, Feedback einbauen (neue Commits aktualisieren den PR)</li>
+      <li>Approve → Merge in main (GitLab: standardmässig Merge-Commit, es gibt auch Squash / Fast-forward)</li>
+    </ol>
+    <p><strong>Grösse:</strong> 200–400 geänderte Zeilen, 60–90 Minuten Review (SmartBear-Studie bei Cisco). Grosse PRs bekommen weniger Kommentare, also klein halten.</p>
+    <div class="two">
+      <div><h3>Worauf achten</h3><ul>
+        <li>zu viele / zu wenige Kommentare</li><li>konsistentes Naming</li><li>Logikfehler, Typos</li><li>lange, komplizierte Zeilen</li><li>unnötiger Code gelöscht</li><li>Tests vorhanden und vollständig</li><li>YAGNI, DRY, KISS, SRP</li><li>Code gepflegter als vorher</li></ul></div>
+      <div><h3>Prinzipien</h3><ul>
+        <li><strong>YAGNI:</strong> nur das Nötige, nicht vergolden</li>
+        <li><strong>DRY:</strong> nichts doppelt</li>
+        <li><strong>KISS:</strong> einfach halten</li>
+        <li><strong>SRP:</strong> jede Klasse ist nur für eine Sache zuständig</li></ul>
+        <h3 style="margin-top:10px">Sozial</h3><ul>
+        <li>nett, professionell, konstruktiv, ausführlich</li>
+        <li>nicht alles nach eigenem Geschmack, sondern als Vorschlag</li>
+        <li>Themen ausserhalb des Features → Follow-up-Ticket</li>
+        <li>„Don’t be a jerk“</li></ul></div>
+    </div>
+    <p class="hint">Im Modul gilt: Das Review macht das Team, KI ersetzt das Vier-Augen-Prinzip nicht.</p>
+  </article>
+
+  <article class="topic" id="t-T">
+    <header><span class="idx">8 / 8</span><h2>Test Driven Development</h2></header>
+    <p>Die Tests treiben das Schreiben des Codes. <strong>Mantra:</strong> zuerst einen Test schreiben, der fehlschlägt, bevor eine Zeile „richtiger“ Code entsteht. Seit ca. 2003, Teil von Agile / Extreme Programming. Ron Jeffries: „Clean code that works“.</p>
+    <div class="rgr">
+      <div class="r"><strong>Red</strong>Test schreiben, der fehlschlägt (es gibt noch keinen Code).</div>
+      <div class="g"><strong>Green</strong>Minimalen Code schreiben, bis der Test grün ist.</div>
+      <div class="f"><strong>Refactor</strong>Code und Tests verbessern, ohne das Verhalten zu ändern. Dann wieder Red.</div>
+    </div>
+    <ul>
+      <li>Iterativ: jeder Test prüft <strong>eine</strong> Logik und <strong>ein</strong> Szenario, also mehrere Tests pro Logik.</li>
+      <li><strong>Best Practices:</strong> Anforderungen verstehen · atomare Tests · einfachsten Test zuerst · Randfälle testen · regelmässig refactoren · schnelle Feedbackschleife · Tests automatisieren · Red-Green-Refactor einhalten · in CI laufen lassen.</li>
+      <li><strong>Vorteile:</strong> lose gekoppelter, modularer Code · weniger Kosten · Refactoring einfacher · Onboarding einfacher · weniger Bugs und Kopplung · bessere Zusammenarbeit · Vertrauen in den Code · keine Angst vor Änderungen.</li>
+      <li><strong>Nachteil:</strong> schwierig in Projekten, die nicht von Anfang an mit TDD gemacht wurden.</li>
+    </ul>
+  </article>
+</section>
+
+<!-- ============ QUIZ ============ -->
+<section class="view" id="view-quiz" hidden>
+  <div class="quizbar">
+    <div class="chips" id="quizTopics" aria-label="Thema wählen"></div>
+    <div class="actions">
+      <label class="toggle"><input type="checkbox" id="onlyOpen"> nur offene Karten</label>
+      <button class="btn ghost" id="shuffleBtn" type="button">Mischen</button>
+      <button class="btn ghost" id="resetBtn" type="button">Fortschritt löschen</button>
+    </div>
+    <div class="progress" aria-hidden="true"><i id="progFill"></i></div>
+    <div class="progress-label"><span id="progText"></span><span>Leertaste = Antwort · → gewusst · ← nochmal</span></div>
+  </div>
+  <div class="card" id="card" aria-live="polite"></div>
+  <p class="hint" id="resetConfirm" hidden></p>
+</section>
+
+<!-- ============ CODE ============ -->
+<section class="view" id="view-code" hidden>
+  <article class="topic">
+    <header><h2>Übungsprojekt LB2-Training</h2></header>
+    <p>Liegt in <code>C:\work\school\LB2-Training</code>. In IntelliJ als Maven-Projekt öffnen, dann Rechtsklick auf <code>src/test/java</code> → <em>Run 'All Tests'</em> oder im Terminal <code>mvn test</code>. Am Anfang ist alles rot, Ziel ist grün. Lösungen liegen in <code>loesungen/</code>, erst nach dem eigenen Versuch anschauen.</p>
+    <div class="tbl"><table>
+      <thead><tr><th>Nr</th><th>Datei</th><th>Aufgabe</th></tr></thead>
+      <tbody>
+        <tr><td>A1</td><td><code>A1_AnnotationsTest</code></td><td>Fehlende Annotations und Imports ergänzen</td></tr>
+        <tr><td>A2</td><td><code>A2_FixTheTestsTest</code></td><td>7 falsche Tests reparieren, der Code ist korrekt</td></tr>
+        <tr><td>A3</td><td><code>A3_ParameterizedTest</code></td><td>Parametrisierte Tests für Grenzwerte schreiben</td></tr>
+        <tr><td>A4</td><td><code>A4_MockitoTest</code></td><td>Service mit Mocks testen (when, verify)</td></tr>
+        <tr><td>A5</td><td><code>A5_TddPasswordTest</code></td><td>TDD: Tests sind fertig, Code schreiben</td></tr>
+        <tr><td>A6</td><td><code>A6_ShippingTest</code></td><td>2 Fehler im Produktivcode finden</td></tr>
+      </tbody>
+    </table></div>
+    <div class="box pass"><b class="lbl">Ziel</b><span class="mono">Tests run: 46, Failures: 0, Errors: 0, Skipped: 1</span></div>
+  </article>
+
+  <article class="topic">
+    <header><h2>Spickzettel zum Auswendiglernen</h2></header>
+    <h3>Imports</h3>
+    <div class="copyrow"><pre><code>import org.junit.jupiter.api.*;                    // @Test, @BeforeEach, @BeforeAll, @DisplayName, @Disabled
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.ValueSource;
+import static org.junit.jupiter.api.Assertions.*;  // assertEquals, assertTrue, assertThrows ...
+import static org.mockito.Mockito.*;               // when, verify, never ...</code></pre></div>
+    <h3>Grundgerüst Testklasse</h3>
+    <div class="copyrow"><pre><code>class CalculatorTest {
+
+    private Calculator calculator;
+
+    @BeforeEach
+    void setUp() {
+        calculator = new Calculator();          // frisch für jeden Test
+    }
+
+    @Test
+    @DisplayName("Zwei Zahlen addieren")
+    void add() {
+        // Arrange - Act - Assert
+        double result = calculator.add(2, 3);
+        assertEquals(5, result);                // erwartet, tatsächlich
+    }
+
+    @Test
+    void divideByZeroThrows() {
+        assertThrows(ArithmeticException.class, () -&gt; calculator.divide(1, 0));
+    }
+
+    @ParameterizedTest
+    @CsvSource({ "14999.95, 0", "15000, 5", "25000, 8.5" })
+    void discount(double price, double expected) {
+        assertEquals(expected, new DiscountCalculator().getDiscountPercent(price));
+    }
+
+    @ParameterizedTest
+    @ValueSource(doubles = { -1, -100 })
+    void negativeThrows(double price) {
+        assertThrows(IllegalArgumentException.class,
+                () -&gt; new DiscountCalculator().getDiscountPercent(price));
+    }
+}</code></pre></div>
+    <h3>Grundgerüst Mockito</h3>
+    <div class="copyrow"><pre><code>@ExtendWith(MockitoExtension.class)        // sonst sind die @Mock-Felder null
+class TransferServiceTest {
+
+    @Mock AccountRepository repository;      // Ersatz für die DB
+    @Mock NotificationService notifier;
+    @InjectMocks TransferService service;    // echtes SUT, bekommt die Mocks
+
+    @Test
+    void transfer() {
+        Account a = new Account(1, "Muster", 500);
+        Account b = new Account(2, "Gates", 100);
+        when(repository.findById(1)).thenReturn(Optional.of(a));   // STUB
+        when(repository.findById(2)).thenReturn(Optional.of(b));
+
+        assertTrue(service.transfer(1, 2, 200));
+        assertEquals(300, a.getBalance());
+
+        verify(repository).save(a);                                 // MOCK
+        verify(notifier).send(eq("Gates"), anyString());
+        // verify(repository, never()).save(any());   verifyNoInteractions(notifier);
+    }
+}</code></pre></div>
+  </article>
+
+  <article class="topic">
+    <header><h2>Typische Fehler in Tests</h2></header>
+    <div class="tbl"><table>
+      <thead><tr><th>Fehler</th><th>Fix</th></tr></thead>
+      <tbody>
+        <tr><td><code>assertEquals(calc.add(2,3), 5)</code></td><td>Reihenfolge: <code>assertEquals(5, calc.add(2,3))</code></td></tr>
+        <tr><td><code>assertEquals(0.3, 0.1 + 0.2)</code> ist rot</td><td>delta: <code>assertEquals(0.3, 0.1 + 0.2, 0.0001)</code></td></tr>
+        <tr><td><code>@BeforeAll void init()</code> gibt einen Fehler</td><td><code>static void init()</code></td></tr>
+        <tr><td>NullPointerException im Test, Feld ist null</td><td><code>@BeforeEach</code> fehlt, oder <code>@ExtendWith(MockitoExtension.class)</code> fehlt</td></tr>
+        <tr><td>Falscher Exception-Typ in <code>assertThrows</code></td><td>Typ nehmen, den der Code wirklich wirft</td></tr>
+        <tr><td>Test ohne Assertion ist grün</td><td>testet nichts, Assertion ergänzen</td></tr>
+        <tr><td><code>static</code> Feld, das Tests verändern</td><td>Tests hängen voneinander ab → <code>@BeforeEach</code> mit neuem Objekt</td></tr>
+        <tr><td><code>@Test</code> und <code>@ParameterizedTest</code> zusammen</td><td>nur <code>@ParameterizedTest</code></td></tr>
+        <tr><td><code>if (x &gt;= 3) ... else if (x &gt;= 5)</code></td><td>grössere Grenze zuerst prüfen, sonst wird sie nie erreicht</td></tr>
+        <tr><td>„ab 100 inklusive“ als <code>&gt; 100</code></td><td><code>&gt;= 100</code>, Grenzwert genau testen</td></tr>
+      </tbody>
+    </table></div>
+  </article>
+</section>
+
+<!-- ============ VIDEOS ============ -->
+<section class="view" id="view-videos" hidden>
+  <article class="topic">
+    <header><h2>Abgabe</h2></header>
+    <div class="runline"><span>Deadline</span><span class="bad">Di 03.11.2026 · 16:55</span><span>persönlich: morgen 2, am 03.11. 1 Abgabe</span><span>alles andere per Video</span></div>
+    <div class="box warn"><b class="lbl">Achtung GitHub</b>Im Repo BusyDenis/M450_Denis sind nur KN01–KN04. KN05–KN08 und die Pipeline-Datei sind nur lokal. GitHub hat ausserdem 2 Commits, die lokal fehlen. Also zuerst <code>git pull</code>, dann <code>git push</code>.</div>
+    <ul>
+      <li><strong>Sprechtexte</strong> pro Folie: <code>C:\work\school\Screencast-Skripte\KN0X.md</code></li>
+      <li><strong>Folien mit Notizen</strong>: <code>C:\work\school\Screencast-Skripte\KN0X_mit_Notizen.pptx</code> (deine Originale bleiben unverändert)</li>
+      <li><strong>Nur Folien aufnehmen:</strong> PowerPoint → Aufzeichnen → in der Aufnahme die Ansicht „Teleprompter“ wählen, dann siehst du die Notizen. Danach Datei → Exportieren → Video erstellen.</li>
+      <li><strong>Folien + Live-Demo:</strong> OBS Studio oder Snipping Tool (Win + Shift + R, Mikrofon einschalten). Sprechtext auf dem Handy daneben.</li>
+      <li>Nicht ablesen. Lies den Text vorher zweimal und erzähl ihn dann in eigenen Worten. 3–6 Minuten pro KN reichen.</li>
+    </ul>
+  </article>
+  <div id="knList" style="display:grid;gap:12px"></div>
+</section>
+
+</main>
+
+<script>
+(function () {
+  "use strict";
+
+  var TOPICS = [
+    { id: "G", name: "Grundlagen" },
+    { id: "S", name: "Teststrategie" },
+    { id: "L", name: "Testlevels" },
+    { id: "U", name: "Unit Testing" },
+    { id: "D", name: "Test Doubles" },
+    { id: "A", name: "Automation" },
+    { id: "C", name: "Code Reviews" },
+    { id: "T", name: "TDD" },
+    { id: "K", name: "Code" }
+  ];
+  var topicName = {};
+  TOPICS.forEach(function (t) { topicName[t.id] = t.name; });
+
+  function pre(s) { return "<pre><code>" + s + "</code></pre>"; }
+
+  var CARDS = [
+    // Grundlagen
+    ["G", "Was ist der Unterschied zwischen einem Fehler und einem Mangel?", "<b>Fehler:</b> Anforderung nicht erfüllt, IST weicht vom SOLL ab.<br><b>Mangel:</b> Anforderung oder berechtigte Erwartung wird nicht angemessen erfüllt, z.B. Berechnung stimmt, aber die Anzeige im GUI ist falsch."],
+    ["G", "Was ist Fehlermaskierung?", "Ein Fehler wird durch einen anderen Programmteil kompensiert und ist deshalb nicht sichtbar. Er tritt erst auf, wenn der andere Teil korrigiert wird, oder viel später (z.B. falsch gespeicherte Daten)."],
+    ["G", "Warum kann man eine Software nie vollständig testen?", "Testen kann Fehlerfreiheit nicht nachweisen. Es gibt zu viele Kombinationen von Eingaben und Randbedingungen. Darum wählt man eine Auswahl an guten Testfällen."],
+    ["G", "Nenne die 4 Kriterien für gute Testfälle.", "1. hohe Wahrscheinlichkeit, Fehler aufzuzeigen · 2. keine Redundanz (nicht dasselbe testen) · 3. unabhängig voneinander · 4. möglichst viel Code abdecken"],
+    ["G", "Wovon hängt ab, wie viel man testet?", "Vom möglichen Schaden. Systeme mit hohem Schaden (Geld, Menschenleben) müssen ausgiebiger getestet werden. Der Testaufwand muss im Verhältnis zum Ergebnis stehen."],
+    ["G", "Ordne im V-Modell zu: Welcher Test gehört zur Anforderungsdefinition, zum funktionalen Systementwurf, zum technischen Systementwurf und zur Komponentenspezifikation?", "Anforderungsdefinition ↔ <b>Abnahmetest</b><br>Funktionaler Systementwurf ↔ <b>Systemtest</b><br>Technischer Systementwurf ↔ <b>Integrationstest</b><br>Komponentenspezifikation ↔ <b>Komponententest</b>"],
+    ["G", "Wie unterscheidet sich das Testen im Wasserfall, im V-Modell und in Scrum?", "<b>Wasserfall:</b> Testen ganz am Schluss.<br><b>V-Modell:</b> Testen ist gleichwertig mit Entwickeln, jede Stufe hat ihre Teststufe, läuft parallel.<br><b>Scrum:</b> iterativ, jedes Inkrement muss shippable sein → wiederholbare, automatisierte Tests (Regression)."],
+    ["G", "Was ist Testabdeckung (Code Coverage) und wie misst man sie?", "Anteil des Codes, der von den Tests ausgeführt wird (z.B. Zeilen oder Verzweigungen). Tools: JaCoCo, IntelliJ „Run with Coverage“. 100 % bedeutet nicht, dass der Code fehlerfrei ist."],
+    // Teststrategie
+    ["S", "Welche 4 Elemente braucht eine Teststrategie?", "1. Testobjekte · 2. was genau getestet wird (Testfälle) · 3. Testmethode (wie: Black-/White-Box, manuell/automatisch) · 4. Testinfrastruktur / Testumgebung"],
+    ["S", "Was ist ein Testobjekt? Gib ein Beispiel.", "Die Komponente oder der Teil der Applikation, der getestet wird: Modul, Klasse, Skript, DB-Skript. Beispiel: bei einer Autovermietung nur die Komponente, die die Rechnung erstellt."],
+    ["S", "Funktionaler oder nicht-funktionaler Test? a) Login mit richtigem Passwort klappt. b) Die Seite lädt in unter 2 Sekunden. c) Passwörter werden verschlüsselt gespeichert.", "a) <b>funktional</b> (WAS die Software tut)<br>b) <b>nicht-funktional</b> (Performance, WIE)<br>c) <b>nicht-funktional</b> (Sicherheit)"],
+    ["S", "Was ist der Unterschied zwischen abstrakten und konkreten Testfällen?", "<b>Abstrakt:</b> keine konkreten Werte, logische Operatoren, z.B. <code>P &lt; 15'000 → 0 %</code>.<br><b>Konkret:</b> echte Ein- und Ausgabewerte, z.B. <code>14'999.95 → 0 %</code>."],
+    ["S", "Rabatt: unter 15'000 → 0 %, bis 20'000 → 5 %, unter 25'000 → 7 %, darüber 8.5 %. Welche konkreten Werte testest du und warum?", "Die Grenzen und knapp daneben: 14'999.95, 15'000, 20'000, 20'000.05, 24'999.95, 25'000, dazu ein negativer Preis. An Grenzen passieren die meisten Fehler (<code>&lt;</code> statt <code>&lt;=</code>)."],
+    ["S", "Erkläre White-Box und Black-Box Testing.", "<b>White-Box:</b> Code ist sichtbar, man testet die Code-Pfade, meist auf Unit-Ebene durch Entwickler.<br><b>Black-Box:</b> innerer Aufbau unbekannt, man testet nur anhand der Spezifikation das sichtbare Verhalten, meist Testteam/Benutzer."],
+    // Testlevels
+    ["L", "Nenne die Testlevels in der richtigen Reihenfolge.", "Unit → Component → Integration → System → Acceptance. Jedes Level ist langsamer und kommt später im Entwicklungsprozess."],
+    ["L", "Unit Test: wer, welche Box, was wird getestet, was ist die Limitation?", "Entwickler, White-Box. Einzelne Komponenten (Klasse, Methode) isoliert, schnell, Sicherheit fürs Refactoring, vor allem funktional. <b>Limitation:</b> isoliert korrekt heisst nicht, dass die Komponenten zusammen funktionieren."],
+    ["L", "Was unterscheidet Component Testing von Integration Testing?", "<b>Component:</b> Entwickler, White-Box, Zusammenspiel mehrerer Komponenten, Schnittstellen (DB, APIs, Queues) werden <b>gemockt</b>.<br><b>Integration:</b> Tester/QA, Black- und White-Box, DB und APIs werden <b>echt</b> benutzt."],
+    ["L", "System Testing: wer, welche Box, was wird getestet?", "Gleiche Teams wie beim Integrationstest, Black-Box. Die ganze Software in einer Live-nahen Umgebung. Funktionale und nicht-funktionale Anforderungen (Load, Stress, Usability, Security)."],
+    ["L", "Was ist der Unterschied zwischen Load Testing und Stress Testing?", "<b>Load:</b> wie verhält sich die Software bei einer festgelegten Anzahl Requests.<br><b>Stress:</b> das Limit der Software herausfinden."],
+    ["L", "Welches Level? a) Kunde prüft vor dem Go-Live seine Kriterien. b) Tester ruft eine API auf, die in die echte DB schreibt. c) Entwickler testet eine Methode mit JUnit.", "a) <b>Acceptance</b> (UAT) · b) <b>Integration</b> · c) <b>Unit</b>"],
+    ["L", "Für welche Tests ist man als Entwickler zuständig?", "Unit und Component Tests, teilweise auch Integration Tests (White-Box). Sie laufen meist automatisch beim Build."],
+    // Unit
+    ["U", "Nenne 5 Eigenschaften guter Unit-Tests.", "isoliert (Reihenfolge egal) · prüfen genau eine Eigenschaft · vollautomatisch · schnell · wiederholbar · kurz und verständlich · gleiche Codequalität wie Produktivcode · testen relevanten Code (keine Getter/Setter) · idealerweise vor dem Code geschrieben"],
+    ["U", "Welche Rolle haben Unit-Tests? (mind. 3)", "steuern das Design · halten Code langfristig änderbar · Voraussetzung für Refactoring · decken versehentliche Änderungen sofort auf · dokumentieren das System"],
+    ["U", "Unterschied @BeforeEach und @BeforeAll?", "<code>@BeforeEach</code> läuft vor <b>jedem</b> Test (z.B. neues Objekt).<br><code>@BeforeAll</code> läuft <b>einmal</b> vor allen Tests und muss <code>static</code> sein (z.B. DB-Verbindung öffnen)."],
+    ["U", "Wofür sind @DisplayName, @Disabled, @Tag und @Timeout?", "@DisplayName: lesbarer Name im Report · @Disabled: Test überspringen · @Tag: Tests markieren, um nur bestimmte laufen zu lassen · @Timeout: Test schlägt fehl, wenn er zu lange dauert"],
+    ["U", "Was ist der Unterschied zwischen assertEquals und assertSame?", "<code>assertEquals</code> prüft, ob die Werte gleich sind (equals).<br><code>assertSame</code> prüft, ob es genau dasselbe Objekt ist (gleiche Referenz)."],
+    ["U", "Wofür braucht man assertAll?", "Mehrere Assertions werden alle ausgeführt, auch wenn eine fehlschlägt. Am Schluss werden alle Fehler zusammen gemeldet. (Ähnlich: SoftAssertions von AssertJ, KN06.)"],
+    ["U", "Was ist F.I.R.S.T.?", "Fast, Independent (isoliert), Repeatable, Self-validating (prüft sich selbst, grün/rot), Timely (rechtzeitig, vor dem Code)."],
+    // Test Doubles
+    ["D", "Was ist ein Test Double und wozu braucht man es?", "Ein Objekt, das im Test anstelle von etwas Echtem verwendet wird (wie ein Stunt-Double). Damit schaltet man Abhängigkeiten aus (DB, API, E-Mail), damit der Test fokussiert und einfach bleibt."],
+    ["D", "Welche zwei Hauptkategorien von Test Doubles gibt es und was gehört dazu?", "<b>Mock</b> (mock, spy) = Behavioral testing<br><b>Stub</b> (stub, dummy, fake) = State testing"],
+    ["D", "Was ist der Unterschied zwischen Mock und Stub?", "<b>Mock:</b> wartet auf Aufrufe und prüft, ob das SUT ihn richtig kontaktiert hat (Verhalten).<br><b>Stub:</b> liefert vordefinierte Daten ans SUT, danach prüft man das Ergebnis/den Zustand."],
+    ["D", "Welches Test Double? a) In-Memory-Liste statt echter Datenbank. b) null wird an den Konstruktor übergeben. c) findAll() gibt immer dieselbe feste Liste zurück. d) Prüfen, ob save() aufgerufen wurde. e) Zeichnet alle Aufrufe still auf.", "a) <b>Fake</b> · b) <b>Dummy</b> · c) <b>Stub</b> · d) <b>Mock</b> · e) <b>Spy</b>"],
+    ["D", "Nenne den Lifecycle eines Mock-Tests.", "1. Daten einrichten · 2. <b>Setup expectations</b> · 3. Anwenden · 4. <b>Verify expectations</b> · 5. Verify state · 6. Teardown<br>(Stub: Setup → Anwenden → Verify state → Teardown)"],
+    ["D", "Was ist ein SUT? Und wofür ist WireMock?", "SUT = System under Test, das getestete Objekt. WireMock startet einen HTTP-Mock-Server, um externe APIs zu mocken und HTTP-Antworten zu stubben."],
+    // Automation
+    ["A", "Nenne 3 Vorteile von Automation Testing gegenüber manuellem Testing.", "zuverlässig · langfristig billiger · ideal für Regression · Knopfdruck/Trigger · Performance-Tests möglich · parallel ausführbar"],
+    ["A", "Was kann manuelles Testing, was automatisiertes nicht kann? Und wann lohnt es sich?", "Exploratives Testen. Lohnt sich, wenn Tests nicht oft wiederholt werden oder der Aufwand für die Automatisierung zu gross ist (kleiner Initialaufwand)."],
+    ["A", "Welche 3 Punkte verbessert Test Automation?", "Effizienz, Test Coverage, Ausführungszeit."],
+    ["A", "Nenne die Schritte, um automatisiertes Testing aufzusetzen.", "Tool auswählen → Scope definieren → Testfälle planen, definieren, implementieren → Tests ausführen → Tests warten (Maintenance)."],
+    ["A", "Was ist ein Smoke Test und was ist ein Regression Test?", "<b>Smoke (Sanity):</b> minimale Tests, ob die Software überhaupt grundlegend läuft.<br><b>Regression:</b> nach einer Code-Änderung prüfen, ob früher funktionierende Funktionen noch gehen. Meist der grösste Testaufwand."],
+    ["A", "Ordne zu: Postman, JMeter, Playwright, Mockito, Selenium.", "Postman: API-Tests · JMeter: Last-/Performance-Tests (Backend) · Playwright: UI/E2E im Browser · Mockito: Mocking im Unit-Test · Selenium: UI-Tests für Tester"],
+    ["A", "Was ist wichtig für eine erfolgreiche Test Automation?", "richtiges Tool · Testprozess definieren und einhalten · Testing-Team · manuelles und automatisches Testen aufeinander abgestimmt"],
+    // Code Reviews
+    ["C", "Was ist ein Code Review und warum macht man es?", "Vier-Augen-Prinzip: Bei jedem Feature schaut mindestens eine zweite Person die Implementierung an, stellt Fragen, korrigiert und gibt das OK. Ziel: Codequalität."],
+    ["C", "Was ist ein Pull Request? Wie heisst er bei GitLab?", "Bitte, die Änderungen eines Branches in einen anderen zu integrieren (mergen). Bei GitLab: Merge Request. Ist eine Konvention der Hosting-Dienste, kein Git-Feature."],
+    ["C", "Beschreibe den Ablauf eines Pull Requests.", "Feature-Branch → implementieren und committen → pushen → PR erstellen (Titel, Beschreibung, Reviewer) → Review mit Kommentaren → Feedback einbauen → Approve → Merge in main."],
+    ["C", "Wie gross sollte ein Pull Request sein?", "200–400 geänderte Zeilen, ca. 60–90 Minuten Review (SmartBear-Analyse bei Cisco). Grössere Features in kleinere aufteilen."],
+    ["C", "Worauf achtet man als Reviewer bei der Codequalität? (mind. 5)", "Kommentare (zu viel/zu wenig) · Naming · Logikfehler · Typos · lange komplizierte Zeilen · unnötiger Code gelöscht · Tests vorhanden und vollständig · YAGNI/DRY/KISS · SRP · Code gepflegter als vorher"],
+    ["C", "Was bedeuten YAGNI, DRY, KISS und SRP?", "YAGNI: You Ain’t Gonna Need It, nur das Nötige · DRY: Don’t Repeat Yourself · KISS: Keep It Simple, Stupid · SRP: Single Responsibility, jede Klasse nur für eine Sache"],
+    ["C", "Wie verhält man sich als Reviewer?", "nett und professionell · konstruktive Kritik · ausführlich erklären · nicht alles nach eigenem Geschmack ändern, sondern als Vorschlag · Themen ausserhalb des Features als Follow-up-Ticket · „Don’t be a jerk“"],
+    // TDD
+    ["T", "Was ist TDD und was ist das Mantra?", "Test Driven Development: Tests treiben das Schreiben des Codes. Mantra: zuerst einen Test schreiben, der fehlschlägt, bevor man eine Zeile richtigen Code schreibt."],
+    ["T", "Erkläre Red, Green, Refactor.", "<b>Red:</b> Test schreiben, der fehlschlägt (kein Code da).<br><b>Green:</b> minimalen Code schreiben, bis der Test grün ist.<br><b>Refactor:</b> Code und Tests verbessern, ohne das Verhalten zu ändern. Dann wieder von vorne."],
+    ["T", "Warum ist TDD ein iterativer Prozess?", "Jeder Test prüft nur eine Logik und ein Szenario. Darum braucht es viele Tests pro Funktion, und der Zyklus Red-Green-Refactor wiederholt sich, bis die Funktion fertig ist."],
+    ["T", "Nenne 4 Best Practices von TDD.", "Anforderungen verstehen · atomare Tests · einfachsten Test zuerst · Randfälle testen · regelmässig refactoren · schnelle Feedbackschleife · automatisieren · Red-Green-Refactor einhalten · in CI laufen lassen"],
+    ["T", "Nenne 4 Vorteile von TDD.", "lose gekoppelter, modularer Code · weniger Kosten · Refactoring einfacher · Onboarding einfacher · weniger Bugs · bessere Zusammenarbeit · Vertrauen in den Code · keine Angst vor Änderungen"],
+    ["T", "Woher kommt TDD und wann ist es schwierig?", "Seit ca. 2003, Teil von Agile Programming / Extreme Programming (Ron Jeffries: „Clean code that works“). Schwierig in Projekten, die nicht von Anfang an mit TDD gemacht wurden."],
+    // Code
+    ["K", "Was fehlt, damit <code>setUp()</code> vor jedem Test läuft?" + pre("void setUp() {\n    calculator = new Calculator();\n}"), pre("@BeforeEach\nvoid setUp() {\n    calculator = new Calculator();\n}") + "Import: <code>org.junit.jupiter.api.BeforeEach</code>"],
+    ["K", "Dieser Code gibt beim Ausführen einen Fehler. Warum?" + pre("@BeforeAll\nvoid initAll() { ... }"), "<code>@BeforeAll</code>-Methoden müssen <code>static</code> sein:" + pre("@BeforeAll\nstatic void initAll() { ... }")],
+    ["K", "Wie oft läuft der Test und welche Werte bekommen die Parameter im 2. Durchlauf?" + pre("@ParameterizedTest\n@CsvSource({ \"1, 1, 2\", \"10, -5, 5\", \"0, 0, 0\" })\nvoid add(double a, double b, double expected) {\n    assertEquals(expected, calc.add(a, b));\n}"), "<b>3 Durchläufe</b> (eine pro Zeile). 2. Durchlauf: a = 10, b = -5, expected = 5. Die Spalten gehen der Reihe nach in die Parameter."],
+    ["K", "Der Test ist grün. Was ist trotzdem falsch?" + pre("assertEquals(calc.add(2, 3), 5);"), "expected und actual sind vertauscht. Richtig: <code>assertEquals(5, calc.add(2, 3));</code> Sonst ist die Fehlermeldung falsch („expected 7 but was 5“)."],
+    ["K", "Warum ist der Test rot und wie reparierst du ihn?" + pre("assertEquals(0.3, calc.add(0.1, 0.2));"), "Rundungsfehler bei double: 0.1 + 0.2 = 0.30000000000000004. Toleranz (delta) angeben:" + pre("assertEquals(0.3, calc.add(0.1, 0.2), 0.0001);")],
+    ["K", "Schreibe eine Assertion: <code>calc.divide(1, 0)</code> soll eine <code>ArithmeticException</code> werfen.", pre("assertThrows(ArithmeticException.class, () -> calc.divide(1, 0));")],
+    ["K", "Was ist an diesem Test schlecht?" + pre("@Test\nvoid multiply() {\n    calc.multiply(3, 4);\n}"), "Keine Assertion, der Test prüft nichts und ist immer grün. Fix: <code>assertEquals(12, calc.multiply(3, 4));</code>"],
+    ["K", "g2 ist rot, wenn g1 vorher läuft. Was ist das Problem, wie reparierst du es?" + pre("private static Account account = new Account(1, \"Muster\", 100);\n\n@Test void g1() { account.deposit(50); assertEquals(150, account.getBalance()); }\n@Test void g2() { assertEquals(100, account.getBalance()); }"), "Die Tests sind nicht isoliert, sie teilen ein <code>static</code> Objekt. Fix: kein static, vor jedem Test neu erstellen:" + pre("private Account account;\n\n@BeforeEach\nvoid setUp() { account = new Account(1, \"Muster\", 100); }")],
+    ["K", "Stub oder Mock?" + pre("when(repository.findById(1)).thenReturn(Optional.of(account));"), "<b>Stub:</b> liefert eine vordefinierte Antwort (State testing)."],
+    ["K", "Stub oder Mock?" + pre("verify(repository).save(account);"), "<b>Mock:</b> prüft, ob die Methode aufgerufen wurde (Behavioral testing)."],
+    ["K", "Die Felder mit <code>@Mock</code> sind null und der Test wirft eine NullPointerException. Was fehlt?", "An der Testklasse <code>@ExtendWith(MockitoExtension.class)</code>. Ohne Extension werden <code>@Mock</code> und <code>@InjectMocks</code> nicht befüllt."],
+    ["K", "Prüfe mit Mockito: <code>save()</code> wurde nie aufgerufen, und der notifier wurde gar nicht benutzt.", pre("verify(repository, never()).save(any());\nverifyNoInteractions(notifier);")],
+    ["K", "Schreibe einen parametrisierten Test mit nur einem Parameter: <code>-1</code>, <code>-100</code> sollen eine IllegalArgumentException werfen.", pre("@ParameterizedTest\n@ValueSource(doubles = { -1, -100 })\nvoid negativeThrows(double price) {\n    assertThrows(IllegalArgumentException.class,\n            () -> discount.getDiscountPercent(price));\n}")],
+    ["K", "Finde den Fehler: Ab 5 Extras soll es 15 % geben." + pre("if (extras >= 3)\n    discount = 10;\nelse if (extras >= 5)\n    discount = 15;"), "Bei 5 Extras ist schon <code>extras >= 3</code> wahr, darum gibt es nie 15 %. Die grössere Grenze zuerst prüfen:" + pre("if (extras >= 5) discount = 15;\nelse if (extras >= 3) discount = 10;")],
+    ["K", "Welche Imports brauchst du für <code>@Test</code> und <code>assertEquals</code>?", pre("import org.junit.jupiter.api.Test;\nimport static org.junit.jupiter.api.Assertions.assertEquals;")],
+    ["K", "Ein Test soll übersprungen werden und im Report „Division durch 0“ heissen. Welche Annotations?", pre("@Test\n@Disabled(\"noch nicht fertig\")\n@DisplayName(\"Division durch 0\")\nvoid divideByZero() { ... }")],
+    ["K", "TDD: Dein neuer Test ist rot. Was machst du als Nächstes?", "Nur so viel Code schreiben, dass genau dieser Test grün wird (Green). Danach aufräumen (Refactor), dann den nächsten roten Test schreiben."]
+  ].map(function (c, i) { return { id: "c" + i, t: c[0], q: c[1], a: c[2] }; });
+
+  // ---------- storage (per viewer convenience only) ----------
+  function load(key, fallback) {
+    try { var v = localStorage.getItem(key); return v ? JSON.parse(v) : fallback; } catch (e) { return fallback; }
+  }
+  function save(key, val) { try { localStorage.setItem(key, JSON.stringify(val)); } catch (e) {} }
+
+  // ---------- tabs ----------
+  var VIEWS = ["theorie", "quiz", "code", "videos"];
+  function show(view) {
+    if (VIEWS.indexOf(view) < 0) view = "theorie";
+    VIEWS.forEach(function (v) {
+      document.getElementById("view-" + v).hidden = v !== view;
+      document.getElementById("tab-" + v).setAttribute("aria-selected", v === view ? "true" : "false");
+    });
+    try { history.replaceState(null, "", "#" + view); } catch (e) {}
+  }
+  document.querySelectorAll("nav.tabs button").forEach(function (b) {
+    b.addEventListener("click", function () { show(b.dataset.view); window.scrollTo(0, 0); });
+  });
+  show((location.hash || "").replace("#", ""));
+
+  // ---------- theory jump chips ----------
+  var jump = document.getElementById("topicJump");
+  TOPICS.filter(function (t) { return t.id !== "K"; }).forEach(function (t) {
+    var b = document.createElement("button");
+    b.type = "button"; b.className = "chip"; b.textContent = t.name;
+    b.addEventListener("click", function () { document.getElementById("t-" + t.id).scrollIntoView({ behavior: "smooth", block: "start" }); });
+    jump.appendChild(b);
+  });
+
+  // ---------- quiz ----------
+  var known = new Set(load("m450-known", []));
+  var filter = "all";
+  var onlyOpen = false;
+  var deck = [];
+  var pos = 0;
+  var revealed = false;
+  var order = CARDS.map(function (c) { return c.id; });
+  var byId = {};
+  CARDS.forEach(function (c) { byId[c.id] = c; });
+
+  var topicsEl = document.getElementById("quizTopics");
+  function renderTopicChips() {
+    topicsEl.innerHTML = "";
+    [{ id: "all", name: "Alle" }].concat(TOPICS).forEach(function (t) {
+      var total = CARDS.filter(function (c) { return t.id === "all" || c.t === t.id; });
+      var done = total.filter(function (c) { return known.has(c.id); }).length;
+      var b = document.createElement("button");
+      b.type = "button"; b.className = "chip";
+      b.setAttribute("aria-pressed", filter === t.id ? "true" : "false");
+      b.innerHTML = t.name + '<span class="n">' + done + "/" + total.length + "</span>";
+      b.addEventListener("click", function () { filter = t.id; buildDeck(); });
+      topicsEl.appendChild(b);
+    });
+  }
+
+  function buildDeck() {
+    deck = order.map(function (id) { return byId[id]; }).filter(function (c) {
+      return (filter === "all" || c.t === filter) && (!onlyOpen || !known.has(c.id));
+    });
+    pos = 0; revealed = false;
+    renderTopicChips(); renderCard();
+  }
+
+  var cardEl = document.getElementById("card");
+  function renderProgress() {
+    var pool = CARDS.filter(function (c) { return filter === "all" || c.t === filter; });
+    var done = pool.filter(function (c) { return known.has(c.id); }).length;
+    document.getElementById("progFill").style.width = (pool.length ? (100 * done / pool.length) : 0) + "%";
+    document.getElementById("progText").textContent = done + " von " + pool.length + " gewusst";
+  }
+
+  function renderCard() {
+    renderProgress();
+    if (!deck.length) {
+      cardEl.innerHTML = '<div class="q">Hier sind alle Karten gewusst.</div><p class="hint">Schalte „nur offene Karten“ aus oder wähle ein anderes Thema.</p>';
+      return;
+    }
+    if (pos >= deck.length) {
+      var pool = deck.filter(function (c) { return !known.has(c.id); }).length;
+      cardEl.innerHTML = '<div class="q">Runde fertig.</div><p>' + (deck.length - pool) + " von " + deck.length + " gewusst.</p>" +
+        '<div class="actions"><button class="btn primary" type="button" id="againOpen">Offene nochmal üben</button><button class="btn" type="button" id="againAll">Alle nochmal</button></div>';
+      document.getElementById("againOpen").addEventListener("click", function () { onlyOpen = true; document.getElementById("onlyOpen").checked = true; buildDeck(); });
+      document.getElementById("againAll").addEventListener("click", function () { onlyOpen = false; document.getElementById("onlyOpen").checked = false; buildDeck(); });
+      return;
+    }
+    var c = deck[pos];
+    var state = known.has(c.id) ? '<span style="color:var(--pass)">bisher gewusst</span>' : "offen";
+    cardEl.innerHTML =
+      '<div class="meta"><span>' + topicName[c.t] + "</span><span>Karte " + (pos + 1) + " / " + deck.length + " · " + state + "</span></div>" +
+      '<div class="q">' + c.q + "</div>" +
+      (revealed
+        ? '<div class="a">' + c.a + '</div><div class="actions"><button class="btn ok" type="button" id="yes">Gewusst<span class="kbd">→</span></button><button class="btn no" type="button" id="no">Nochmal<span class="kbd">←</span></button></div>'
+        : '<div class="actions"><button class="btn primary" type="button" id="reveal">Antwort zeigen<span class="kbd">Leertaste</span></button></div>');
+    if (revealed) {
+      document.getElementById("yes").addEventListener("click", function () { mark(true); });
+      document.getElementById("no").addEventListener("click", function () { mark(false); });
+    } else {
+      document.getElementById("reveal").addEventListener("click", reveal);
+    }
+  }
+  function reveal() { revealed = true; renderCard(); var y = document.getElementById("yes"); if (y) y.focus({ preventScroll: true }); }
+  function mark(ok) {
+    var c = deck[pos];
+    if (ok) known.add(c.id); else known.delete(c.id);
+    save("m450-known", Array.from(known));
+    pos += 1; revealed = false;
+    renderTopicChips(); renderCard();
+  }
+
+  document.addEventListener("keydown", function (e) {
+    if (document.getElementById("view-quiz").hidden) return;
+    var tag = (e.target.tagName || "").toLowerCase();
+    if (tag === "input" || tag === "textarea") return;
+    if (pos >= deck.length) return;
+    if (e.code === "Space" && !revealed) { e.preventDefault(); reveal(); }
+    else if (revealed && e.key === "ArrowRight") { e.preventDefault(); mark(true); }
+    else if (revealed && e.key === "ArrowLeft") { e.preventDefault(); mark(false); }
+  });
+
+  document.getElementById("onlyOpen").addEventListener("change", function (e) { onlyOpen = e.target.checked; buildDeck(); });
+  document.getElementById("shuffleBtn").addEventListener("click", function () {
+    for (var i = order.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)); var t = order[i]; order[i] = order[j]; order[j] = t; }
+    buildDeck();
+  });
+  var resetArmed = false;
+  document.getElementById("resetBtn").addEventListener("click", function (e) {
+    var note = document.getElementById("resetConfirm");
+    if (!resetArmed) {
+      resetArmed = true; e.target.textContent = "Wirklich löschen?";
+      note.hidden = false; note.textContent = "Nochmal klicken, um alle Karten wieder auf offen zu setzen.";
+      return;
+    }
+    resetArmed = false; e.target.textContent = "Fortschritt löschen"; note.hidden = true;
+    known = new Set(); save("m450-known", []); buildDeck();
+  });
+  buildDeck();
+
+  // ---------- videos ----------
+  var KNS = [
+    { kn: "KN01", title: "Grundlagen, Testtreiber Preisberechnung", status: "pass", statusText: "Tests laufen",
+      show: "Testtreiber ausführen: beim Original 3 Fehler, beim korrigierten Code alles OK. Dann die 2 Bugs zeigen (if-Reihenfolge, Händlerrabatt auf Zubehör).",
+      cmd: "cd KN01/preisberechnung\njavac *.java\njava PriceCalculatorTest" },
+    { kn: "KN02", title: "Teststrategie, Bank-Software", status: "pass", statusText: "bereit",
+      show: "Abstrakte vs. konkrete Tabelle, Grenzwerte. Bank-Software starten und live zeigen: 100 einzahlen, -500 einzahlen (Fehler), leere Eingabe (Absturz).",
+      cmd: "cd KN02/bank-software/bank-software-mvn\nmvn compile exec:java -Dexec.mainClass=ch.tbz.bank.software.Main",
+      warn: "Wechselkurs (Menü w) braucht Internet." },
+    { kn: "KN03", title: "Unit Testing mit JUnit, Bank", status: "pass", statusText: "Tests laufen",
+      show: "CalculatorTest: @BeforeEach, @ParameterizedTest, assertThrows. mvn test zeigen, dann Bank-Tests (40 grün) und den JaCoCo-Report im Browser.",
+      cmd: "cd KN03/calculator\nmvn test\ncd ../bank/02_bank-vorgabe\nmvn test\nstart target/site/jacoco/index.html" },
+    { kn: "KN04", title: "Mocking mit Mockito, Addressbook", status: "pass", statusText: "Tests laufen",
+      show: "AddressServiceTest: @Mock fürs Repository, when/thenReturn (Stub), verify (Mock). Comparator vorher/nachher. mvn test (25 grün).",
+      cmd: "cd KN04/addressbook\nmvn test" },
+    { kn: "KN05", title: "Automation: REST, E2E, Last", status: "warn", statusText: "Server vorher starten",
+      show: "Backend und Frontend starten. Newman-REST-Tests und den Report zeigen. Playwright klickt sich sichtbar durch den Browser. Lasttest: den fertigen JMeter-Report öffnen.",
+      cmd: "cd KN05/app/student-app && mvn spring-boot:run\ncd KN05/app/student-app/src/main/js/my-app && npm start\ncd KN05/rest-tests && npm test\ncd KN05/e2e-tests && npm test\nstart KN05/load-tests/report/index.html",
+      warn: "JMeter ist nicht installiert. Zeig den vorhandenen Report in load-tests/report statt den Test neu laufen zu lassen." },
+    { kn: "KN06", title: "Reports und CI/CD-Pipeline", status: "warn", statusText: "Pipeline nie gelaufen",
+      show: "RecipeControllerTest (MockMvc), Mapper-Test mit SoftAssertions und warum. Reports lokal öffnen. Auf GitHub: Actions → letzter Run → Jobs, Artifacts, GitHub Pages.",
+      cmd: "cd KN06/recipe/recipe-planner-backend\nmvn test\nstart target/site/jacoco/index.html",
+      warn: "Die Pipeline ist noch nie gelaufen, weil KN06 und die Workflow-Datei nicht auf GitHub sind. Erst pushen, dann auf GitHub unter Settings → Pages → Source „GitHub Actions“ einstellen und einen Pipeline-Lauf abwarten." },
+    { kn: "KN07", title: "Code Reviews mit Pull Requests", status: "warn", statusText: "noch nicht fertig",
+      show: "Die PRs auf GitHub: Beschreibung, Diff, Review-Kommentare vom Partner, Merge. Dann das Feature (Rezept hinzufügen, bearbeiten) kurz live.",
+      cmd: "git push -u origin feature/add-recipe\ngit push -u origin feature/edit-recipe-backend\ngit push -u origin feature/edit-recipe-frontend",
+      warn: "Die 3 Feature-Branches gibt es nur lokal, auf GitHub existiert noch kein PR. Das Review muss dein Partner machen (KI darf das nicht ersetzen), und die Tabelle „Erkenntnisse“ ist leer. Erst das erledigen, dann aufnehmen." },
+    { kn: "KN08", title: "TDD mit PHPUnit", status: "warn", statusText: "Vergleich fehlt",
+      show: "Test.php lesen. Einen Methodenbody kurz auskommentieren → rot, wieder einfügen → grün (Red → Green). Stolperstein mb_strlen erklären.",
+      cmd: "cd KN08/FancyApp\nphp phpunit.phar --testdox Testcases/Test.php",
+      warn: "php ist nur in einer neuen PowerShell im PATH. Der Vergleich mit einer anderen Gruppe (Aufgabe 3) ist noch leer." }
+  ];
+  var vstate = load("m450-videos", {});
+  var list = document.getElementById("knList");
+  KNS.forEach(function (k) {
+    var el = document.createElement("article");
+    el.className = "kn";
+    var s = vstate[k.kn] || {};
+    el.innerHTML =
+      "<header><h3>" + k.kn + " · " + k.title + '</h3><span class="pill ' + k.status + '">' + k.statusText + "</span></header>" +
+      "<p><strong>Live zeigen:</strong> " + k.show + "</p>" +
+      '<div class="copyrow"><pre><code></code></pre><button class="copy" type="button">Kopieren</button></div>' +
+      (k.warn ? '<div class="box warn"><b class="lbl">Achtung</b>' + k.warn + "</div>" : "") +
+      '<div class="checks"><label class="toggle"><input type="checkbox" id="rec-' + k.kn + '"' + (s.rec ? " checked" : "") + "> Video aufgenommen</label>" +
+      '<label class="toggle"><input type="checkbox" id="sub-' + k.kn + '"' + (s.sub ? " checked" : "") + "> abgegeben</label></div>";
+    el.querySelector("code").textContent = k.cmd;
+    el.querySelector(".copy").addEventListener("click", function (e) {
+      var btn = e.target;
+      function done(ok) { btn.textContent = ok ? "Kopiert" : "Markiere den Text"; setTimeout(function () { btn.textContent = "Kopieren"; }, 1500); }
+      try {
+        navigator.clipboard.writeText(k.cmd).then(function () { done(true); }, function () { selectCode(); done(false); });
+      } catch (err) { selectCode(); done(false); }
+      function selectCode() {
+        try { var r = document.createRange(); r.selectNodeContents(el.querySelector("code")); var sel = getSelection(); sel.removeAllRanges(); sel.addRange(r); } catch (x) {}
+      }
+    });
+    ["rec", "sub"].forEach(function (f) {
+      el.querySelector("#" + f + "-" + k.kn).addEventListener("change", function (e) {
+        vstate[k.kn] = vstate[k.kn] || {};
+        vstate[k.kn][f] = e.target.checked;
+        save("m450-videos", vstate);
+      });
+    });
+    list.appendChild(el);
+  });
+})();
+</script>
+
+</html>
