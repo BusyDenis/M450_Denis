@@ -79,6 +79,8 @@ section.view { display: grid; gap: 22px; }
 .chip[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--surface); }
 .chip .n { font-family: var(--font-mono); font-size: 0.75rem; opacity: 0.75; margin-left: 4px; }
 
+[hidden] { display: none !important; }
+section.view > *, article.topic > *, .card > * { min-width: 0; }
 article.topic { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 20px; display: grid; gap: 12px; scroll-margin-top: 64px; }
 article.topic header { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
 .idx { font-family: var(--font-mono); font-size: 0.8rem; color: var(--accent); }
@@ -119,6 +121,36 @@ th { font-weight: 600; color: var(--muted); font-size: 0.8rem; letter-spacing: 0
 .btn.ghost { background: none; }
 .kbd { font-family: var(--font-mono); font-size: 0.75rem; opacity: 0.7; margin-left: 6px; }
 .toggle { display: inline-flex; align-items: center; gap: 6px; font-size: 0.9rem; cursor: pointer; }
+.answer { display: grid; gap: 6px; }
+.answer label { font: 600 0.78rem var(--font-mono); letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+.answer textarea { font: 400 1rem/1.5 var(--font-body); color: var(--fg); background: var(--bg); border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; resize: vertical; min-height: 84px; width: 100%; }
+.ai { border-radius: 8px; padding: 12px 14px; background: var(--code-bg); display: grid; gap: 6px; }
+.ai.richtig { background: var(--pass-soft); } .ai.teilweise { background: var(--warn-soft); } .ai.falsch { background: var(--fail-soft); }
+.pill-ai { font: 600 0.78rem var(--font-mono); letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+.ai.richtig .pill-ai { color: var(--pass); } .ai.teilweise .pill-ai { color: var(--warn); } .ai.falsch .pill-ai { color: var(--fail); }
+.seg { display: inline-flex; justify-self: start; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
+.seg button { font: 600 0.85rem var(--font-body); padding: 7px 14px; background: none; border: 0; color: var(--muted); cursor: pointer; }
+.seg button[aria-pressed="true"] { background: var(--accent); color: var(--surface); }
+.opts, .mlist { display: grid; gap: 8px; }
+.opt { display: flex; gap: 10px; align-items: flex-start; text-align: left; font: 500 1rem/1.4 var(--font-body); padding: 10px 14px; border-radius: 8px; border: 1px solid var(--line); background: var(--surface); color: var(--fg); cursor: pointer; min-width: 0; }
+.opt span:last-child { min-width: 0; overflow-wrap: anywhere; }
+.opt .tick { flex: none; width: 1.2em; height: 1.2em; border: 1.5px solid var(--muted); border-radius: 4px; display: inline-flex; align-items: center; justify-content: center; font-size: 0.85em; }
+.opt.picked { border-color: var(--accent); background: var(--accent-soft); }
+.opt.right { border-color: var(--pass); background: var(--pass-soft); }
+.opt.wrong { border-color: var(--fail); background: var(--fail-soft); }
+.opt.missed { border-color: var(--pass); border-style: dashed; }
+.opt:disabled { cursor: default; color: var(--fg); }
+.mrow { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 240px); gap: 6px 12px; align-items: center; padding: 8px 10px; border-radius: 8px; border: 1px solid var(--line); }
+.mrow select { font: 500 0.95rem var(--font-body); padding: 8px; border-radius: 8px; border: 1px solid var(--line); background: var(--surface); color: var(--fg); width: 100%; }
+.mrow.right { background: var(--pass-soft); border-color: var(--pass); }
+.mrow.wrong { background: var(--fail-soft); border-color: var(--fail); }
+.mrow .fix { grid-column: 1 / -1; font-size: 0.85rem; font-weight: 600; color: var(--fail); }
+.result { font-weight: 600; } .result.ok { color: var(--pass); } .result.no { color: var(--fail); }
+@media (max-width: 560px) { .mrow { grid-template-columns: 1fr; } }
+.card .a .short { font-size: 1.12rem; font-weight: 600; }
+.card .a details summary { cursor: pointer; color: var(--muted); font-size: 0.9rem; }
+.card .a details[open] summary { margin-bottom: 6px; }
+.card .a b.lbl { font: 600 0.78rem var(--font-mono); letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
 
 /* Videos */
 .kn { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 16px 18px; display: grid; gap: 10px; }
@@ -133,6 +165,8 @@ th { font-weight: 600; color: var(--muted); font-size: 0.8rem; letter-spacing: 0
 .copy { position: absolute; top: 6px; right: 6px; font: 500 0.75rem var(--font-body); padding: 3px 8px; border-radius: 6px; border: 1px solid var(--line); background: var(--surface); color: var(--muted); cursor: pointer; }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
 </style>
+</head>
+<body>
 
 <header class="top wrap">
   <div class="eyebrow">Modul 450 · Applikationen testen · TBZ</div>
@@ -287,9 +321,15 @@ void add(double a, double b, double expected) {   // Spalten der Reihe nach
   <article class="topic" id="t-D">
     <header><span class="idx">5 / 8</span><h2>Schnittstellen &amp; Test Doubles</h2></header>
     <p>Ein <strong>Test Double</strong> ersetzt im Test etwas Echtes, wie ein Stunt-Double. Damit schaltet man Abhängigkeiten aus, die im Test nicht interessieren. SUT = System under Test.</p>
+    <div class="box pass"><b class="lbl">Merksatz</b><strong>Stub antwortet, Mock kontrolliert.</strong> <code>when(...).thenReturn(...)</code> = Stub · <code>verify(...)</code> = Mock</div>
     <div class="two">
-      <div class="box"><b class="lbl">Mock (mock, spy)</b><strong>Behavioral testing.</strong> Prüft, ob das SUT ihn richtig aufgerufen hat.</div>
-      <div class="box"><b class="lbl">Stub (stub, dummy, fake)</b><strong>State testing.</strong> Liefert Daten ans SUT, danach prüft man das Ergebnis.</div>
+      <div class="box"><b class="lbl">Stub (stub, dummy, fake)</b><strong>Antwortet.</strong> Du sagst ihm vorher, was er zurückgeben soll. Danach prüfst du mit <code>assertEquals</code> das Ergebnis deiner Klasse. Das nennt man State Testing.
+        <pre><code>when(repo.findById(1)).thenReturn(Optional.of(konto));
+service.transfer(1, 2, 200);
+assertEquals(300, konto.getBalance());</code></pre></div>
+      <div class="box"><b class="lbl">Mock (mock, spy)</b><strong>Kontrolliert.</strong> Er merkt sich die Aufrufe. Danach fragst du: Wurde die Methode aufgerufen, mit welchen Daten? Wichtig bei Methoden ohne Rückgabewert (<code>save</code>, <code>sendEmail</code>). Das nennt man Behavioral Testing.
+        <pre><code>verify(repo).save(konto);
+verify(mail, never()).send(any());</code></pre></div>
     </div>
     <div class="tbl"><table>
       <thead><tr><th>Double</th><th>Was es macht</th><th>Beispiel</th></tr></thead>
@@ -402,7 +442,7 @@ void add(double a, double b, double expected) {   // Spalten der Reihe nach
       <button class="btn ghost" id="resetBtn" type="button">Fortschritt löschen</button>
     </div>
     <div class="progress" aria-hidden="true"><i id="progFill"></i></div>
-    <div class="progress-label"><span id="progText"></span><span>Leertaste = Antwort · → gewusst · ← nochmal</span></div>
+    <div class="progress-label"><span id="progText"></span><span>Ctrl+Enter = KI prüft · → gewusst · ← nochmal</span></div>
   </div>
   <div class="card" id="card" aria-live="polite"></div>
   <p class="hint" id="resetConfirm" hidden></p>
@@ -556,6 +596,158 @@ class TransferServiceTest {
 
   function pre(s) { return "<pre><code>" + s + "</code></pre>"; }
 
+  // Auswahl-Varianten (gleiche Reihenfolge wie CARDS)
+  // m: zuordnen [[Eintrag, richtige Option]], o: Optionen (sonst die richtigen, gemischt)
+  // s: eine richtige Antwort (die erste), x/w: mehrere richtige / falsche, p: eigene Frage
+  var CH = [
+    { m: [["Anforderung nicht erfüllt, IST ≠ SOLL", "Fehler"], ["Funktioniert, aber nicht angemessen", "Mangel"]] },
+    { s: ["Ein Fehler wird durch einen anderen ausgeglichen und bleibt unsichtbar", "Ein Fehler wird absichtlich versteckt, damit die Tests grün sind", "Ein Fehler tritt nur auf dem Server auf", "Ein Test prüft den falschen Wert"] },
+    { s: ["Es gibt viel zu viele Kombinationen von Eingaben", "Tests sind zu teuer", "Unit Tests sehen nicht alles", "Der Code ändert sich ständig"] },
+    { x: ["finden mit hoher Wahrscheinlichkeit Fehler", "keine Redundanz", "unabhängig voneinander", "decken viel Code ab"], w: ["möglichst viele Tests schreiben", "Getter und Setter testen", "immer manuell ausführen"] },
+    { s: ["Je nach möglichem Schaden", "Immer genau 100 % Coverage", "So viel Zeit gerade übrig ist", "Nur was der Kunde bezahlt"] },
+    { m: [["Anforderungsdefinition", "Abnahmetest"], ["Funktionaler Systementwurf", "Systemtest"], ["Technischer Systementwurf", "Integrationstest"], ["Komponentenspezifikation", "Komponententest"]] },
+    { m: [["Wasserfall", "Testen am Schluss"], ["V-Modell", "parallel, jede Stufe hat ihren Test"], ["Scrum", "iterativ, automatisierte Tests pro Inkrement"]] },
+    { s: ["Anteil Code, den die Tests ausführen", "Anzahl Tests pro Klasse", "Anteil grüner Tests", "Wie schnell die Tests laufen"] },
+    { x: ["Testobjekte", "Testfälle", "Testmethode", "Testumgebung"], w: ["Budget", "Programmiersprache", "Release-Datum"] },
+    { s: ["Der Teil der Software, der getestet wird", "Das Objekt, das den Test ausführt", "Ein Mock-Objekt", "Die Testumgebung"] },
+    { m: [["a) Login mit richtigem Passwort", "funktional"], ["b) Seite lädt unter 2 Sekunden", "nicht-funktional"], ["c) Passwörter verschlüsselt", "nicht-funktional"]], o: ["funktional", "nicht-funktional"] },
+    { m: [["P < 15'000 → 0 %", "abstrakt"], ["14'999.95 → 0 %", "konkret"]], o: ["abstrakt", "konkret"] },
+    { p: "Welche Werte sind Grenzwerte?", x: ["14'999.95", "15'000", "20'000", "20'000.05", "25'000"], w: ["10'000", "18'000", "50'000"] },
+    { m: [["Code sichtbar, Pfade testen", "White-Box"], ["Nur Spezifikation, Code unbekannt", "Black-Box"]] },
+    { p: "Bring die Levels in die richtige Reihenfolge.", m: [["1.", "Unit"], ["2.", "Component"], ["3.", "Integration"], ["4.", "System"], ["5.", "Acceptance"]] },
+    { m: [["Wer schreibt sie?", "Entwickler"], ["Welche Box?", "White-Box"]], o: ["Entwickler", "Tester", "Kunde", "White-Box", "Black-Box"] },
+    { m: [["DB und APIs werden gemockt", "Component"], ["Echte DB und echte API", "Integration"]] },
+    { x: ["Black-Box", "ganze Software", "Live-nahe Umgebung", "auch nicht-funktional"], w: ["macht der Kunde", "White-Box", "eine Klasse isoliert"] },
+    { m: [["Verhalten bei festgelegter Last", "Lasttest"], ["Last erhöhen bis zum Limit", "Stresstest"]] },
+    { m: [["a) Kunde prüft vor dem Go-Live", "Acceptance"], ["b) API schreibt in die echte DB", "Integration"], ["c) Methode mit JUnit", "Unit"]], o: ["Unit", "Component", "Integration", "System", "Acceptance"] },
+    { x: ["Unit", "Component"], w: ["System", "Acceptance"] },
+    { x: ["isoliert", "prüft genau eine Sache", "vollautomatisch", "schnell", "wiederholbar"], w: ["testet Getter und Setter", "hängt von anderen Tests ab", "braucht eine echte Datenbank"] },
+    { x: ["Fehler sofort finden", "Refactoring absichern", "System dokumentieren", "Design steuern"], w: ["ersetzen den Abnahmetest", "finden Performance-Probleme"] },
+    { m: [["@BeforeEach", "vor jedem Test"], ["@BeforeAll", "einmal vor allen, static"]] },
+    { m: [["@DisplayName", "lesbarer Name"], ["@Disabled", "überspringen"], ["@Tag", "markieren"], ["@Timeout", "max. Laufzeit"]] },
+    { m: [["assertEquals", "gleicher Wert"], ["assertSame", "dasselbe Objekt"]] },
+    { s: ["Alle Prüfungen laufen, Fehler werden gesammelt", "Stoppt beim ersten Fehler", "Führt alle Tests der Klasse aus", "Prüft, ob eine Exception kommt"] },
+    { m: [["F", "Fast"], ["I", "Independent"], ["R", "Repeatable"], ["S", "Self-validating"], ["T", "Timely"]] },
+    { s: ["Ein Ersatzobjekt, das im Test eine Abhängigkeit ersetzt", "Ein Test, der zweimal läuft", "Zwei Tests für dieselbe Methode", "Ein Backup der Datenbank"] },
+    { m: [["mock", "Mock"], ["spy", "Mock"], ["stub", "Stub"], ["dummy", "Stub"], ["fake", "Stub"]], o: ["Mock", "Stub"] },
+    { m: [["Mock", "prüft Aufrufe (Verhalten)"], ["Stub", "liefert Daten (Zustand)"]] },
+    { m: [["a) In-Memory-Liste statt DB", "Fake"], ["b) null an den Konstruktor", "Dummy"], ["c) findAll() gibt feste Liste", "Stub"], ["d) Prüfen, ob save() aufgerufen wurde", "Mock"], ["e) Zeichnet Aufrufe still auf", "Spy"]], o: ["Dummy", "Stub", "Fake", "Spy", "Mock"] },
+    { p: "Bring die Schritte in die richtige Reihenfolge.", m: [["1.", "Setup"], ["2.", "Erwartungen setzen"], ["3.", "Anwenden"], ["4.", "Erwartungen prüfen"], ["5.", "Zustand prüfen"], ["6.", "Teardown"]] },
+    { m: [["SUT", "das getestete Objekt"], ["WireMock", "HTTP-APIs mocken"]] },
+    { x: ["zuverlässig", "langfristig billiger", "ideal für Regression", "Performance-Tests möglich"], w: ["exploratives Testen möglich", "kleiner Initialaufwand", "braucht kein Know-how"] },
+    { s: ["Exploratives Testen", "Performance-Tests", "Tests parallel ausführen", "Regressionstests auf Knopfdruck"] },
+    { x: ["Effizienz", "Test Coverage", "Ausführungszeit"], w: ["Design", "Kundenzufriedenheit", "Code-Stil"] },
+    { p: "Bring die Schritte in die richtige Reihenfolge.", m: [["1.", "Tool wählen"], ["2.", "Scope festlegen"], ["3.", "Testfälle planen und bauen"], ["4.", "Ausführen"], ["5.", "Warten"]] },
+    { m: [["Smoke Test", "Läuft es überhaupt?"], ["Regression Test", "Geht nach einer Änderung noch alles?"]] },
+    { m: [["Postman", "API-Tests"], ["JMeter", "Lasttests"], ["Playwright", "E2E im Browser"], ["Mockito", "Mocks im Unit Test"], ["Selenium", "UI-Tests für Tester"]] },
+    { x: ["richtiges Tool", "klarer Testprozess", "Testing-Team", "manuell und automatisch abgestimmt"], w: ["möglichst teures Tool", "alles automatisieren, nie manuell"] },
+    { s: ["Vier-Augen-Prinzip: Eine zweite Person prüft den Code", "Die KI prüft den Code", "Der Compiler prüft den Code", "Der Code wird zweimal geschrieben"] },
+    { s: ["Merge Request", "Push Request", "Branch Request", "Commit Request"] },
+    { p: "Bring die Schritte in die richtige Reihenfolge.", m: [["1.", "Feature-Branch"], ["2.", "Commit"], ["3.", "Push"], ["4.", "Pull Request"], ["5.", "Review"], ["6.", "Merge"]] },
+    { s: ["200–400 Zeilen", "20–40 Zeilen", "1000–2000 Zeilen", "Egal, Hauptsache ein PR"] },
+    { x: ["Naming", "Logikfehler", "Tests vorhanden", "kein doppelter Code", "Kommentare"], w: ["Lieblings-Formatierung des Reviewers", "Anzahl Commits"] },
+    { m: [["YAGNI", "nur das Nötige"], ["DRY", "nichts doppelt"], ["KISS", "einfach halten"], ["SRP", "eine Aufgabe pro Klasse"]] },
+    { x: ["freundlich", "konstruktiv", "Vorschläge statt Befehle"], w: ["alles nach eigenem Geschmack ändern", "Themen ausserhalb des Features im selben PR verlangen"] },
+    { s: ["Zuerst ein Test, der fehlschlägt, dann der Code", "Zuerst der Code, dann der Test", "Tests erst am Schluss", "Nur manuelle Tests"] },
+    { m: [["Red", "Test schlägt fehl"], ["Green", "minimaler Code bis grün"], ["Refactor", "aufräumen, Tests bleiben grün"]] },
+    { s: ["Jeder Test prüft nur ein Szenario", "Weil Tests langsam sind", "Weil man nur einmal testet", "Weil der Kunde es so will"] },
+    { x: ["einfachster Test zuerst", "atomare Tests", "Randfälle testen", "regelmässig refactoren"], w: ["viele Verhalten in einem Test", "Code vor dem Test schreiben"] },
+    { x: ["modularer Code", "einfaches Refactoring", "weniger Bugs", "Vertrauen in den Code"], w: ["schneller ohne Tests", "Refactoring nie mehr nötig"] },
+    { s: ["Extreme Programming, seit ca. 2003", "Wasserfallmodell, 1970", "V-Modell, 1990", "Scrum, 2010"] },
+    { s: ["@BeforeEach", "@BeforeAll", "@Test", "@Before"] },
+    { s: ["Die Methode muss static sein", "Die Methode braucht @Test", "Die Methode muss public sein", "Die Methode braucht einen Parameter"] },
+    { s: ["3 Durchläufe, im 2.: a = 10, b = -5, expected = 5", "1 Durchlauf", "3 Durchläufe, im 2.: a = 1, b = 1, expected = 2", "9 Durchläufe"] },
+    { s: ["expected und actual sind vertauscht", "Das delta fehlt", "Falsche Assertion", "Nichts, alles richtig"] },
+    { s: ["delta angeben: assertEquals(0.3, x, 0.0001)", "assertSame verwenden", "assertTrue verwenden", "Test löschen"] },
+    { s: ["assertThrows(ArithmeticException.class, () -> calc.divide(1, 0));", "assertEquals(ArithmeticException, calc.divide(1, 0));", "assertThrows(calc.divide(1, 0));", "assertFalse(calc.divide(1, 0));"] },
+    { s: ["Keine Assertion, der Test prüft nichts", "Falsche Annotation", "Falscher erwarteter Wert", "Nichts, der Test ist gut"] },
+    { s: ["Nicht isoliert: @BeforeEach mit neuem Objekt", "Falsche Reihenfolge: @Order anpassen", "expected und actual vertauscht", "delta fehlt"] },
+    { s: ["Stub", "Mock"] },
+    { s: ["Mock", "Stub"] },
+    { s: ["@ExtendWith(MockitoExtension.class) fehlt", "@BeforeEach fehlt", "@Test fehlt", "@InjectMocks fehlt"] },
+    { p: "Wie prüfst du, dass save() nie aufgerufen wurde?", s: ["verify(repository, never()).save(any());", "verify(repository).save(null);", "assertNull(repository.save());", "when(repository.save(any())).thenReturn(false);"] },
+    { s: ["@ParameterizedTest + @ValueSource(doubles = {-1, -100})", "@ParameterizedTest + @CsvSource({-1, -100})", "@Test(-1, -100)", "@RepeatedTest(2)"] },
+    { s: ["Grössere Grenze zuerst prüfen: >= 5 vor >= 3", "else entfernen", ">= durch > ersetzen", "Nichts, der Code ist richtig"] },
+    { s: ["import org.junit.jupiter.api.Test; + import static org.junit.jupiter.api.Assertions.assertEquals;", "import junit.Test; + import junit.assertEquals;", "import static org.junit.jupiter.api.Test;", "import org.junit.Assert.*;"] },
+    { x: ["@Test", "@Disabled", "@DisplayName"], w: ["@Ignore", "@Skip", "@Name"] },
+    { s: ["Minimalen Code schreiben, bis der Test grün ist", "Den Test löschen", "Gleich alles implementieren", "Zuerst refactoren"] }
+  ];
+
+  // Kurzantworten: so viel reicht in der Prüfung (gleiche Reihenfolge wie CARDS)
+  var SHORT = [
+    "Fehler: Anforderung nicht erfüllt (IST ≠ SOLL). Mangel: erfüllt, aber nicht angemessen.",
+    "Ein Fehler wird durch einen anderen ausgeglichen und bleibt deshalb unsichtbar.",
+    "Zu viele Kombinationen. Testen zeigt Fehler, beweist aber nie Fehlerfreiheit.",
+    "Findet Fehler, keine Redundanz, unabhängig, deckt viel Code ab.",
+    "Je grösser der mögliche Schaden, desto mehr testen.",
+    "Anforderungen ↔ Abnahme, funktional ↔ System, technisch ↔ Integration, Komponente ↔ Komponententest.",
+    "Wasserfall: Test am Schluss. V-Modell: parallel und gleichwertig. Scrum: iterativ, automatisiert.",
+    "Anteil Code, den die Tests ausführen. Tool: JaCoCo.",
+    "Testobjekte, Testfälle, Testmethode, Testumgebung.",
+    "Der Teil, der getestet wird, z.B. die Rechnungs-Komponente.",
+    "a) funktional  b) nicht-funktional  c) nicht-funktional",
+    "Abstrakt: Bereiche (P < 15'000). Konkret: echte Werte (14'999.95).",
+    "Die Grenzwerte: 14'999.95, 15'000, 20'000, 20'000.05, 25'000.",
+    "White-Box: Code sichtbar (Entwickler). Black-Box: nur die Spezifikation (Tester).",
+    "Unit → Component → Integration → System → Acceptance.",
+    "Entwickler, White-Box, eine Klasse isoliert, schnell.",
+    "Component: Schnittstellen gemockt. Integration: echte DB und API.",
+    "Testteam, Black-Box, ganze Software, live-nahe Umgebung.",
+    "Load: festgelegte Last. Stress: bis zum Limit.",
+    "a) Acceptance  b) Integration  c) Unit",
+    "Unit und Component (teils Integration).",
+    "Isoliert, prüft eine Sache, automatisch, schnell, wiederholbar.",
+    "Fehler sofort finden, Refactoring absichern, System dokumentieren.",
+    "@BeforeEach: vor jedem Test. @BeforeAll: einmal vor allen, static.",
+    "Name im Report · überspringen · markieren · max. Laufzeit.",
+    "assertEquals: gleicher Wert. assertSame: dasselbe Objekt.",
+    "Alle Prüfungen laufen, die Fehler werden gesammelt.",
+    "Fast, Independent, Repeatable, Self-validating, Timely.",
+    "Ersatzobjekt im Test, das eine Abhängigkeit ersetzt.",
+    "Mock (mock, spy) und Stub (stub, dummy, fake).",
+    "Mock prüft Aufrufe (Verhalten). Stub liefert Daten (Zustand).",
+    "a) Fake  b) Dummy  c) Stub  d) Mock  e) Spy",
+    "Setup → Erwartungen setzen → Anwenden → Erwartungen prüfen → Zustand prüfen → Teardown.",
+    "SUT = das getestete Objekt. WireMock = HTTP-APIs mocken.",
+    "Zuverlässig, langfristig billiger, ideal für Regression.",
+    "Exploratives Testen. Lohnt sich bei Tests, die selten laufen.",
+    "Effizienz, Test Coverage, Ausführungszeit.",
+    "Tool → Scope → Testfälle → Ausführen → Warten.",
+    "Smoke: Läuft es überhaupt? Regression: Geht nach einer Änderung noch alles?",
+    "Postman: API · JMeter: Last · Playwright: E2E · Mockito: Mocks · Selenium: UI",
+    "Richtiges Tool, klarer Prozess, Team, manuell und automatisch abgestimmt.",
+    "Vier-Augen-Prinzip: Eine zweite Person prüft den Code.",
+    "Bitte, einen Branch in einen anderen zu mergen. GitLab: Merge Request.",
+    "Branch → Commit → Push → PR → Review → Merge.",
+    "200–400 Zeilen, 60–90 Minuten.",
+    "Naming, Logikfehler, Tests, kein doppelter Code, Kommentare.",
+    "Nur Nötiges · nichts doppelt · einfach halten · eine Aufgabe pro Klasse.",
+    "Freundlich, konstruktiv, Vorschläge statt Befehle.",
+    "Zuerst ein Test, der fehlschlägt, dann der Code.",
+    "Red: Test schlägt fehl. Green: minimaler Code. Refactor: aufräumen.",
+    "Jeder Test prüft nur ein Szenario, also viele kleine Zyklen.",
+    "Einfachster Test zuerst, atomare Tests, Randfälle, regelmässig refactoren.",
+    "Modularer Code, einfaches Refactoring, weniger Bugs, Vertrauen.",
+    "Seit ca. 2003, aus Extreme Programming. Schwierig bei alten Projekten.",
+    "@BeforeEach",
+    "Die Methode muss static sein.",
+    "3 Durchläufe. Im 2.: a = 10, b = -5, expected = 5.",
+    "expected und actual sind vertauscht.",
+    "Rundungsfehler: delta angeben, z.B. 0.0001.",
+    "assertThrows(ArithmeticException.class, () -> calc.divide(1, 0));",
+    "Keine Assertion, der Test prüft nichts.",
+    "Nicht isoliert: @BeforeEach mit neuem Objekt.",
+    "Stub",
+    "Mock",
+    "@ExtendWith(MockitoExtension.class) fehlt.",
+    "verify(repository, never()).save(any()); verifyNoInteractions(notifier);",
+    "@ParameterizedTest mit @ValueSource(doubles = {-1, -100})",
+    "Grössere Grenze zuerst prüfen: >= 5 vor >= 3.",
+    "import org.junit.jupiter.api.Test; import static org.junit.jupiter.api.Assertions.assertEquals;",
+    "@Test @Disabled(\"...\") @DisplayName(\"Division durch 0\")",
+    "Minimalen Code schreiben, bis der Test grün ist."
+  ];
+
   var CARDS = [
     // Grundlagen
     ["G", "Was ist der Unterschied zwischen einem Fehler und einem Mangel?", "<b>Fehler:</b> Anforderung nicht erfüllt, IST weicht vom SOLL ab.<br><b>Mangel:</b> Anforderung oder berechtigte Erwartung wird nicht angemessen erfüllt, z.B. Berechnung stimmt, aber die Anzeige im GUI ist falsch."],
@@ -637,7 +829,7 @@ class TransferServiceTest {
     ["K", "Welche Imports brauchst du für <code>@Test</code> und <code>assertEquals</code>?", pre("import org.junit.jupiter.api.Test;\nimport static org.junit.jupiter.api.Assertions.assertEquals;")],
     ["K", "Ein Test soll übersprungen werden und im Report „Division durch 0“ heissen. Welche Annotations?", pre("@Test\n@Disabled(\"noch nicht fertig\")\n@DisplayName(\"Division durch 0\")\nvoid divideByZero() { ... }")],
     ["K", "TDD: Dein neuer Test ist rot. Was machst du als Nächstes?", "Nur so viel Code schreiben, dass genau dieser Test grün wird (Green). Danach aufräumen (Refactor), dann den nächsten roten Test schreiben."]
-  ].map(function (c, i) { return { id: "c" + i, t: c[0], q: c[1], a: c[2] }; });
+  ].map(function (c, i) { return { id: "c" + i, t: c[0], q: c[1], a: c[2], k: SHORT[i] || "", ch: CH[i] || null }; });
 
   // ---------- storage (per viewer convenience only) ----------
   function load(key, fallback) {
@@ -670,6 +862,18 @@ class TransferServiceTest {
   });
 
   // ---------- quiz ----------
+  var sampleFn = null;
+  var ai = null;
+  var drafts = {};
+  try {
+    if (window.claude && typeof window.claude.use === "function") {
+      window.claude.use("sample").then(function (s) {
+        sampleFn = s || null;
+        var b = document.getElementById("aiCheck");
+        if (b && sampleFn) b.hidden = false;
+      }, function () {});
+    }
+  } catch (e) {}
   var known = new Set(load("m450-known", []));
   var filter = "all";
   var onlyOpen = false;
@@ -727,12 +931,55 @@ class TransferServiceTest {
     }
     var c = deck[pos];
     var state = known.has(c.id) ? '<span style="color:var(--pass)">bisher gewusst</span>' : "offen";
+    var a = ai && ai.id === c.id ? ai : null;
+    var checked = a && !a.loading && !a.error;
+    var sp = c.ch;
+    var m = mode[c.id] || (sp ? "pick" : "write");
+    var res = done[c.id];
+    var body;
+    if (m === "pick") {
+      body = pickHtml(c);
+    } else {
+      var aiHtml = "";
+      if (a) {
+        aiHtml = a.loading
+          ? '<div class="ai"><span class="pill-ai">KI prüft deine Antwort …</span></div>'
+          : a.error
+            ? '<div class="ai"><p id="aiMsg"></p></div>'
+            : '<div class="ai ' + a.verdict + '"><span class="pill-ai">' + VERDICT[a.verdict] + '</span><p id="aiMsg"></p></div>';
+      }
+      body = '<div class="answer"><label for="ans">Deine Antwort</label><textarea id="ans" rows="3" placeholder="In eigenen Worten antworten …"></textarea></div>' + aiHtml;
+    }
+    var checkBtn = m === "write" ? '<button class="btn' + (revealed ? "" : " primary") + '" type="button" id="aiCheck"' + (sampleFn && !checked ? "" : " hidden") + '>KI prüfen<span class="kbd">Ctrl+Enter</span></button>' : "";
+    var pickBtn = m === "pick" && !res && kind(sp) !== "single" ? '<button class="btn primary" type="button" id="pickCheck">Prüfen</button>' : "";
+    var tabs = sp ? '<div class="seg" aria-label="Antwortart"><button type="button" data-m="pick" aria-pressed="' + (m === "pick") + '">Auswählen</button><button type="button" data-m="write" aria-pressed="' + (m === "write") + '">Selbst schreiben</button></div>' : "";
     cardEl.innerHTML =
       '<div class="meta"><span>' + topicName[c.t] + "</span><span>Karte " + (pos + 1) + " / " + deck.length + " · " + state + "</span></div>" +
       '<div class="q">' + c.q + "</div>" +
+      tabs + body +
+      (revealed ? '<div class="a"><b class="lbl">So antwortest du</b><p class="short" id="short"></p><details><summary>Mehr Details</summary>' + c.a + "</details></div>" : "") +
+      '<div class="actions">' +
       (revealed
-        ? '<div class="a">' + c.a + '</div><div class="actions"><button class="btn ok" type="button" id="yes">Gewusst<span class="kbd">→</span></button><button class="btn no" type="button" id="no">Nochmal<span class="kbd">←</span></button></div>'
-        : '<div class="actions"><button class="btn primary" type="button" id="reveal">Antwort zeigen<span class="kbd">Leertaste</span></button></div>');
+        ? '<button class="btn ok" type="button" id="yes">Gewusst<span class="kbd">→</span></button><button class="btn no" type="button" id="no">Nochmal<span class="kbd">←</span></button>' + checkBtn
+        : pickBtn + checkBtn + '<button class="btn" type="button" id="reveal">Antwort zeigen<span class="kbd">Leertaste</span></button>') +
+      "</div>";
+    var sh = document.getElementById("short");
+    if (sh) sh.textContent = c.k;
+    cardEl.querySelectorAll(".seg button").forEach(function (b) {
+      b.addEventListener("click", function () { mode[c.id] = b.dataset.m; renderCard(); });
+    });
+    if (m === "write") {
+      if (a && !a.loading) document.getElementById("aiMsg").textContent = a.error || a.feedback;
+      var ta = document.getElementById("ans");
+      ta.value = drafts[c.id] || "";
+      ta.addEventListener("input", function () { drafts[c.id] = ta.value; });
+      ta.addEventListener("keydown", function (e) {
+        if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) { e.preventDefault(); check(); }
+      });
+      document.getElementById("aiCheck").addEventListener("click", check);
+    } else {
+      wirePick(c);
+    }
     if (revealed) {
       document.getElementById("yes").addEventListener("click", function () { mark(true); });
       document.getElementById("no").addEventListener("click", function () { mark(false); });
@@ -741,8 +988,140 @@ class TransferServiceTest {
     }
   }
   function reveal() { revealed = true; renderCard(); var y = document.getElementById("yes"); if (y) y.focus({ preventScroll: true }); }
+
+  // ---------- Auswählen ----------
+  var mode = {};
+  var sel = {};
+  var done = {};
+  var pickNote = null;
+  function escH(s) { return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;"); }
+  function kind(sp) { return sp.m ? "match" : sp.x ? "multi" : "single"; }
+  function shuffled(arr, seed) {
+    var h = 2166136261;
+    for (var i = 0; i < seed.length; i++) { h ^= seed.charCodeAt(i); h = Math.imul(h, 16777619); }
+    var r = function () { h ^= h << 13; h ^= h >>> 17; h ^= h << 5; return (h >>> 0) / 4294967296; };
+    var a = arr.slice();
+    for (var j = a.length - 1; j > 0; j--) { var k = Math.floor(r() * (j + 1)); var t = a[j]; a[j] = a[k]; a[k] = t; }
+    return a;
+  }
+  function options(c) {
+    var sp = c.ch;
+    if (sp.m) {
+      if (sp.o) return sp.o;
+      var u = [];
+      sp.m.forEach(function (r) { if (u.indexOf(r[1]) < 0) u.push(r[1]); });
+      return shuffled(u, c.id);
+    }
+    return shuffled(sp.s ? sp.s : sp.x.concat(sp.w), c.id);
+  }
+  function pickHtml(c) {
+    var sp = c.ch, k = kind(sp), opts = options(c), res = done[c.id];
+    if (!(c.id in sel)) sel[c.id] = k === "single" ? null : [];
+    var st = sel[c.id];
+    var html = '<p class="hint">' + escH(sp.p || (k === "match" ? "Ordne zu." : k === "multi" ? "Kreuze alle richtigen an." : "Wähle die richtige Antwort.")) + "</p>";
+    if (k === "match") {
+      html += '<div class="mlist">' + sp.m.map(function (r, i) {
+        var cls = res ? (st[i] === r[1] ? " right" : " wrong") : "";
+        return '<div class="mrow' + cls + '"><span>' + escH(r[0]) + '</span><select data-i="' + i + '"' + (res ? " disabled" : "") + ' aria-label="' + escH(r[0]) + '"><option value="">– wählen –</option>' +
+          opts.map(function (o) { return "<option" + (st[i] === o ? " selected" : "") + ">" + escH(o) + "</option>"; }).join("") + "</select>" +
+          (res && st[i] !== r[1] ? '<span class="fix">Richtig: ' + escH(r[1]) + "</span>" : "") + "</div>";
+      }).join("") + "</div>";
+    } else {
+      html += '<div class="opts">' + opts.map(function (o, i) {
+        var picked = k === "multi" ? st.indexOf(o) >= 0 : st === o;
+        var correct = k === "multi" ? sp.x.indexOf(o) >= 0 : o === sp.s[0];
+        var cls = res ? (picked && correct ? " right" : picked ? " wrong" : correct ? " missed" : "") : picked ? " picked" : "";
+        return '<button type="button" class="opt' + cls + '" data-o="' + i + '"' + (res ? " disabled" : "") + ">" +
+          (k === "multi" ? '<span class="tick">' + (picked ? "✓" : "") + "</span>" : "") + "<span>" + escH(o) + "</span></button>";
+      }).join("") + "</div>";
+    }
+    if (res) html += '<p class="result ' + (res.ok ? "ok" : "no") + '">' + (res.ok ? "Richtig!" : "Nicht ganz. Die richtigen Antworten sind grün markiert.") + "</p>";
+    else if (pickNote && pickNote.id === c.id) html += '<p class="hint">' + escH(pickNote.msg) + "</p>";
+    return html;
+  }
+  function wirePick(c) {
+    var k = kind(c.ch), opts = options(c);
+    if (k === "match") {
+      cardEl.querySelectorAll("select[data-i]").forEach(function (s) {
+        s.addEventListener("change", function () { sel[c.id][+s.dataset.i] = s.value || undefined; });
+      });
+    } else {
+      cardEl.querySelectorAll(".opt").forEach(function (b) {
+        b.addEventListener("click", function () {
+          var o = opts[+b.dataset.o];
+          if (k === "single") { sel[c.id] = o; checkPick(); return; }
+          var st = sel[c.id], i = st.indexOf(o);
+          if (i >= 0) st.splice(i, 1); else st.push(o);
+          renderCard();
+        });
+      });
+    }
+    var pc = document.getElementById("pickCheck");
+    if (pc) pc.addEventListener("click", checkPick);
+  }
+  function checkPick() {
+    var c = deck[pos], sp = c.ch, k = kind(sp), st = sel[c.id], ok;
+    if (k === "match") {
+      if (sp.m.some(function (_, i) { return !st[i]; })) { pickNote = { id: c.id, msg: "Wähle zuerst für jede Zeile etwas aus." }; renderCard(); return; }
+      ok = sp.m.every(function (r, i) { return st[i] === r[1]; });
+    } else if (k === "multi") {
+      if (!st.length) { pickNote = { id: c.id, msg: "Kreuze zuerst etwas an." }; renderCard(); return; }
+      ok = st.length === sp.x.length && st.every(function (o) { return sp.x.indexOf(o) >= 0; });
+    } else {
+      if (st == null) return;
+      ok = st === sp.s[0];
+    }
+    pickNote = null;
+    done[c.id] = { ok: ok };
+    revealed = true;
+    renderCard();
+    var y = document.getElementById(ok ? "yes" : "no");
+    if (y) y.focus({ preventScroll: true });
+  }
+
+  // ---------- KI-Prüfung (Claude, auf dem Konto der Person, die die Seite ansieht) ----------
+  var VERDICT = { richtig: "Richtig", teilweise: "Teilweise richtig", falsch: "Noch nicht richtig" };
+  function plain(html) { var d = document.createElement("div"); d.innerHTML = html; return d.textContent.replace(/\s+\n/g, "\n").trim(); }
+  function check() {
+    var c = deck[pos];
+    if (!sampleFn || !c) return;
+    var answer = (drafts[c.id] || "").trim();
+    if (!answer) { ai = { id: c.id, error: "Schreib zuerst deine Antwort ins Feld." }; renderCard(); return; }
+    ai = { id: c.id, loading: true };
+    renderCard();
+    var prompt =
+      "Du bist ein freundlicher Lehrer für das Modul 450 \"Applikationen testen\" an einer Berufsschule in der Schweiz. " +
+      "Prüfe die Antwort eines Lernenden auf eine Prüfungsfrage. Bewerte nur den Inhalt, nicht Rechtschreibung oder Stil. Eigene Worte sind ok.\n\n" +
+      "Frage:\n" + plain(c.q) + "\n\nKurzantwort (das reicht für die Prüfung):\n" + c.k + "\n\nDetails zur Orientierung:\n" + plain(c.a) +
+      "\n\nAntwort des Lernenden:\n" + answer.slice(0, 2000) + "\n\n" +
+      "Wenn die Antwort die Kurzantwort inhaltlich trifft, ist sie richtig, auch wenn Details fehlen. " +
+      'Antworte nur mit JSON: {"verdict": "richtig" | "teilweise" | "falsch", "feedback": "..."}. ' +
+      "feedback: höchstens 2 sehr kurze Sätze auf Deutsch in der Du-Form, Schweizer Schreibweise (ss statt ß): was fehlt oder falsch ist und die Korrektur. Bei richtig reicht ein kurzes Lob.";
+    sampleFn.json(prompt, { modelTier: "quick" }).then(function (r) {
+      var v = String((r && r.verdict) || "").toLowerCase();
+      if (!VERDICT[v]) v = "teilweise";
+      if (!deck[pos] || deck[pos].id !== c.id) return;
+      ai = { id: c.id, verdict: v, feedback: String((r && r.feedback) || "") };
+      revealed = true;
+      renderCard();
+    }, function (e) {
+      var code = e && e.code;
+      var msg = "Das hat nicht geklappt. Klick nochmal auf „KI prüfen“.";
+      if (["not_granted", "sampling_disabled", "not_declared", "capability_disabled", "capability_removed"].indexOf(code) >= 0) {
+        sampleFn = null;
+        msg = "Die KI-Prüfung ist hier nicht verfügbar. Du kannst die Antwort trotzdem aufdecken.";
+      } else if (code === "rate_limited") {
+        msg = "Gerade zu viele Anfragen. Versuch es in einer Minute nochmal.";
+      } else if (code === "session_expired") {
+        msg = "Bitte melde dich bei Claude neu an.";
+      }
+      if (deck[pos] && deck[pos].id === c.id) { ai = { id: c.id, error: msg }; renderCard(); }
+    });
+  }
   function mark(ok) {
     var c = deck[pos];
+    delete done[c.id];
+    delete sel[c.id];
     if (ok) known.add(c.id); else known.delete(c.id);
     save("m450-known", Array.from(known));
     pos += 1; revealed = false;
@@ -752,9 +1131,9 @@ class TransferServiceTest {
   document.addEventListener("keydown", function (e) {
     if (document.getElementById("view-quiz").hidden) return;
     var tag = (e.target.tagName || "").toLowerCase();
-    if (tag === "input" || tag === "textarea") return;
+    if (tag === "input" || tag === "textarea" || tag === "select") return;
     if (pos >= deck.length) return;
-    if (e.code === "Space" && !revealed) { e.preventDefault(); reveal(); }
+    if (e.code === "Space" && !revealed && tag !== "button") { e.preventDefault(); reveal(); }
     else if (revealed && e.key === "ArrowRight") { e.preventDefault(); mark(true); }
     else if (revealed && e.key === "ArrowLeft") { e.preventDefault(); mark(false); }
   });
@@ -845,4 +1224,5 @@ class TransferServiceTest {
 })();
 </script>
 
+</body>
 </html>
