@@ -12,3 +12,5 @@
 | KN08 | Test Driven Development | [LOESUNG.md](KN08/LOESUNG.md) |
 
 Präsentationen pro KN: `KNxx/praesentation/KNxx.pptx`
+
+Lernen für die LB2: [Lernkarten](LB2/lernkarten.html) und [Übungsprojekt](LB2/LB2-Training/README.md)
