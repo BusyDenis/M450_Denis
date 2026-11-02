@@ -59,6 +59,7 @@ test('shows error when backend fails', async () => {
 
     expect(await screen.findByText('Rezept konnte nicht gespeichert werden.')).toBeInTheDocument();
     expect(screen.getByText('Submit')).toBeEnabled();
+    expect(screen.getByLabelText('Recipe Name:')).toHaveValue('Pizza');
 });
 
 test('sends recipe only once when submit is clicked twice', () => {

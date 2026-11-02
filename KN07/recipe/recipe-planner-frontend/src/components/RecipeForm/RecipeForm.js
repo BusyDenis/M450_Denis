@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import '../AddRecipe/AddRecipe.css';
 import {Form, Button, Col, Row, Alert} from 'react-bootstrap';
 import AddIngredient from "../AddIngredient/AddIngredient";
@@ -19,6 +19,20 @@ function RecipeForm({title, startRecipe, onSave, error}) {
     const [ingredients, setIngredients] = useState(() => withKeys(startRecipe.ingredients));
     const [nameError, setNameError] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
+
+    // Formular neu fuellen, wenn ein anderes Rezept uebergeben wird
+    // (beim ersten Render ist es schon im useState drin, darum dann nichts machen)
+    const loadedRecipe = useRef(startRecipe);
+    useEffect(() => {
+        if (loadedRecipe.current === startRecipe) {
+            return;
+        }
+        loadedRecipe.current = startRecipe;
+        setName(startRecipe.name || '');
+        setDescription(startRecipe.description || '');
+        setImageUrl(startRecipe.imageUrl || '');
+        setIngredients(withKeys(startRecipe.ingredients));
+    }, [startRecipe]);
 
     const addIngredient = () => {
         setIngredients([...ingredients, {key: newKey(), name: '', unit: 'PIECE', amount: '', comment: ''}]);
