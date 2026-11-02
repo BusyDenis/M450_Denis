@@ -1,6 +1,7 @@
 package ch.tbz.recipe.planner.service;
 
 import ch.tbz.recipe.planner.entities.RecipeEntity;
+import ch.tbz.recipe.planner.exception.ResourceNotFoundException;
 import ch.tbz.recipe.planner.mapper.RecipeEntityMapper;
 import ch.tbz.recipe.planner.repository.RecipeRepository;
 import ch.tbz.recipe.planner.domain.Recipe;
@@ -36,8 +37,8 @@ public class RecipeService {
     }
 
     public Recipe updateRecipe(UUID recipeId, Recipe recipe) {
-        if (repository.findById(recipeId).isEmpty()) {
-            return null;
+        if (!repository.existsById(recipeId)) {
+            throw new ResourceNotFoundException("Rezept mit id " + recipeId + " nicht gefunden");
         }
         recipe.setId(recipeId);
         var updatedRecipe = repository.save(mapper.domainToEntity(recipe));
