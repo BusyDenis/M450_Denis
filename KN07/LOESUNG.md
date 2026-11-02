@@ -19,20 +19,20 @@ Die PR-Texte zum Einfügen stehen in [PULL_REQUESTS.md](PULL_REQUESTS.md).
 - Zutaten hinzufügen und entfernen
 - Submit schickt `POST /api/recipes` und springt zurück zur Übersicht
 - Fehlermeldung, wenn der Name leer ist oder das Backend einen Fehler meldet
-- Tests: `AddRecipe.test.js` (4 Tests, axios gemockt)
+- Tests: `AddRecipe.test.js` (5 Tests, axios gemockt)
 
 ## Aufgabe 2 – Rezept bearbeiten (Frontend + Backend)
 
 **Backend**
 - `PUT /api/recipes/recipe/{id}` → 200 mit geändertem Rezept, 404 wenn es das Rezept nicht gibt
 - `RecipeService.updateRecipe(...)`
-- Tests: Controller (MockMvc), Service (Mockito), Integrationstest mit echter H2-Datenbank → 22 Tests grün
+- Tests: Controller (MockMvc), Service (Mockito), Integrationstest mit echter H2-Datenbank → 23 Tests grün
 
 **Frontend**
 - Button "Edit Details" auf jeder Karte öffnet `/edit/{id}`
 - Formular wird mit den Daten vom Backend gefüllt, Speichern mit `PUT`
 - Formular aus Aufgabe 1 in eine gemeinsame Komponente `RecipeForm` ausgelagert, damit Add und Edit denselben Code benutzen
-- Tests: `EditRecipe.test.js` (3 Tests) + `AddRecipe.test.js` → 7 Tests grün
+- Tests: `EditRecipe.test.js` (3 Tests), `RecipeForm.test.js` und `Recipe.test.js` (je 1 Test) + `AddRecipe.test.js` (5 Tests) → 10 Tests grün
 
 ## Review-Checkliste (aus der Theorie)
 
@@ -65,7 +65,7 @@ Moreno ist aus einer anderen Gruppe und hat das Feature nicht selbst gebaut. Dar
 | Tests | Jest (Frontend), MockMvc + Mockito + Integrationstest (Backend) | Positiv: gute Testabdeckung. Integrationstest soll mit `@Transactional` laufen, damit keine Testdaten liegen bleiben (PR 2) | `@Transactional` + `flush`/`clear` im Integrationstest, neue Tests für Submit, `RecipeForm`, Edit-Link und unbekanntes Rezept → Frontend 10, Backend 23 Tests grün |
 
 **Was ich gelernt habe**
-- Zwei Leute lösen das gleiche Feature oft ganz unterschiedlich. Im Review sieht man andere Ansätze.
+- Im Review sieht man andere Ansätze, auch wenn der Reviewer das Feature nicht selbst gebaut hat: Moreno hat z.B. `existsById` und eine Exception statt `null` vorgeschlagen.
 - Kleine PRs (Frontend und Backend getrennt) lassen sich viel schneller reviewen.
 - Beim Review findet man Dinge, die man selbst übersieht, z.B. ungenutzte Imports oder fehlende Fehlerbehandlung.
 - Kommentare im Review sollten konkret und freundlich sein: "Was hältst du davon, wenn ..." statt "Das ist falsch".

@@ -15,7 +15,7 @@
 1. Backend und Frontend starten
 2. "Add Recipes" öffnen, Rezept mit einer Zutat erfassen, Submit
 3. Neues Rezept erscheint in "Browse"
-4. `npm test` → 4 Tests grün
+4. `npm test` → 5 Tests grün
 
 ---
 
@@ -29,14 +29,14 @@
 - `RecipeService.updateRecipe(id, recipe)`
 
 ### Testen
-- `mvn test` → 22 Tests grün
-- Neue Tests: `updateRecipe`, `updateUnknownRecipeReturns404` (Controller), `updateRecipe`, `updateUnknownRecipeReturnsNull` (Service), `UpdateRecipeIntegrationTest` (echte H2-Datenbank)
+- `mvn test` → 23 Tests grün
+- Neue Tests: `updateRecipe`, `updateUnknownRecipeReturns404` (Controller), `updateRecipe`, `updateUnknownRecipeThrowsNotFound` (Service), `UpdateRecipeIntegrationTest` (echte H2-Datenbank)
 
 ---
 
 ## PR 3 – Rezept bearbeiten (Frontend)
 
-**Branch:** `feature/edit-recipe-frontend` → `main` (baut auf PR 1 auf)
+**Branch:** `feature/edit-recipe-frontend` → `feature/add-recipe` (baut auf PR 1 auf)
 
 ### Was wurde gemacht
 - Button "Edit Details" öffnet `/edit/{id}`
@@ -47,4 +47,4 @@
 1. PR 2 muss im Backend gemerged sein
 2. In "Browse" bei einem Rezept auf "Edit Details" klicken, Namen ändern, Submit
 3. Übersicht zeigt den neuen Namen
-4. `npm test` → 7 Tests grün
+4. `npm test` → 10 Tests grün
