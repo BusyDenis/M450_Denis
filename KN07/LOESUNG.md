@@ -49,7 +49,7 @@ Die PR-Texte zum Einfügen stehen in [PULL_REQUESTS.md](PULL_REQUESTS.md).
 
 ## Erkenntnisse
 
-Reviewer: Moreno (kein fester Partner, Moreno hat meine PRs reviewt)
+Reviewer: Moreno. Ich hatte keinen Partner, darum habe ich die Aufgaben alleine gemacht und meine Änderungen dann zusammen mit Moreno reviewt.
 
 Moreno ist aus einer anderen Gruppe und hat das Feature nicht selbst gebaut. Darum gibt es keine Partner-Lösung zum Vergleichen, in der Tabelle steht stattdessen, was ich nach seinem Review geändert habe.
 
@@ -65,7 +65,7 @@ Moreno ist aus einer anderen Gruppe und hat das Feature nicht selbst gebaut. Dar
 | Tests | Jest (Frontend), MockMvc + Mockito + Integrationstest (Backend) | Positiv: gute Testabdeckung. Integrationstest soll mit `@Transactional` laufen, damit keine Testdaten liegen bleiben (PR 2) | `@Transactional` + `flush`/`clear` im Integrationstest, neue Tests für Submit, `RecipeForm`, Edit-Link und unbekanntes Rezept → Frontend 10, Backend 23 Tests grün |
 
 **Was ich gelernt habe**
-- Im Review sieht man andere Ansätze, auch wenn der Reviewer das Feature nicht selbst gebaut hat: Moreno hat z.B. `existsById` und eine Exception statt `null` vorgeschlagen.
+- Im Review sieht man andere Ansätze, auch ohne Partner-Lösung: Beim gemeinsamen Review hat Moreno z.B. `existsById` und eine Exception statt `null` vorgeschlagen.
 - Kleine PRs (Frontend und Backend getrennt) lassen sich viel schneller reviewen.
 - Beim Review findet man Dinge, die man selbst übersieht, z.B. ungenutzte Imports oder fehlende Fehlerbehandlung.
 - Kommentare im Review sollten konkret und freundlich sein: "Was hältst du davon, wenn ..." statt "Das ist falsch".
