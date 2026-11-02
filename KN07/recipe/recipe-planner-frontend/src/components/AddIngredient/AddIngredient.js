@@ -2,7 +2,7 @@ import React from 'react';
 import './AddIngredient.css';
 import {Button, Col, Form, Row} from "react-bootstrap";
 
-const units = ['PIECE', 'GRAMM', 'KILOGRAMM', 'LITRE', 'DECILITRE'];
+const units = ['PIECE', 'GRAM', 'KILOGRAM', 'LITRE', 'DECILITRE'];
 
 const AddIngredient = ({ingredient, updateIngredient, removeIngredient}) => {
 

@@ -28,7 +28,7 @@ test('sends recipe with ingredient to backend', async () => {
     fireEvent.change(screen.getByLabelText('Description:'), {target: {value: 'Mit Kaese'}});
     fireEvent.click(screen.getByText('Add Ingredient'));
     fireEvent.change(screen.getByLabelText('Ingredient name'), {target: {value: 'Mehl'}});
-    fireEvent.change(screen.getByLabelText('Unit'), {target: {value: 'GRAMM'}});
+    fireEvent.change(screen.getByLabelText('Unit'), {target: {value: 'GRAM'}});
     fireEvent.change(screen.getByLabelText('Quantity'), {target: {value: '500'}});
     fireEvent.click(screen.getByText('Submit'));
 
@@ -37,7 +37,7 @@ test('sends recipe with ingredient to backend', async () => {
         name: 'Pizza',
         description: 'Mit Kaese',
         imageUrl: '',
-        ingredients: [{name: 'Mehl', unit: 'GRAMM', amount: 500, comment: ''}]
+        ingredients: [{name: 'Mehl', unit: 'GRAM', amount: 500, comment: ''}]
     });
 });
 
