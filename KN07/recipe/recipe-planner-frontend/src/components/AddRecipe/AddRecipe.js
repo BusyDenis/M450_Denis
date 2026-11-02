@@ -10,7 +10,7 @@ function AddRecipe() {
     const [error, setError] = useState('');
 
     const saveRecipe = (recipe) => {
-        axios.post(baseURL, recipe)
+        return axios.post(baseURL, recipe)
             .then(() => navigate('/'))
             .catch(() => setError('Rezept konnte nicht gespeichert werden.'));
     }

@@ -18,7 +18,7 @@ function EditRecipe() {
     }, [recipeId]);
 
     const saveRecipe = (changedRecipe) => {
-        axios.put(baseURL + recipeId, changedRecipe)
+        return axios.put(baseURL + recipeId, changedRecipe)
             .then(() => navigate('/'))
             .catch(() => setError('Rezept konnte nicht gespeichert werden.'));
     }

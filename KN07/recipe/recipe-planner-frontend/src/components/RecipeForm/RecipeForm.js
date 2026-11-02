@@ -12,6 +12,7 @@ function RecipeForm({title, startRecipe, onSave, error}) {
     );
     const [nextKey, setNextKey] = useState(ingredients.length + 1);
     const [nameError, setNameError] = useState('');
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     const addIngredient = () => {
         setIngredients([...ingredients, {key: nextKey, name: '', unit: 'PIECE', amount: '', comment: ''}]);
@@ -31,11 +32,16 @@ function RecipeForm({title, startRecipe, onSave, error}) {
     const save = (event) => {
         event.preventDefault();
 
+        if (isSubmitting) {
+            return;
+        }
+
         if (name.trim() === '') {
             setNameError('Bitte einen Namen eingeben.');
             return;
         }
 
+        setIsSubmitting(true);
         onSave({
             name: name,
             description: description,
@@ -46,7 +52,7 @@ function RecipeForm({title, startRecipe, onSave, error}) {
                 amount: Number(ingredient.amount),
                 comment: ingredient.comment || ''
             }))
-        });
+        }).finally(() => setIsSubmitting(false));
     }
 
     return (
@@ -83,7 +89,7 @@ function RecipeForm({title, startRecipe, onSave, error}) {
                     />
                 )}
                 <Button variant="warning" onClick={addIngredient} className="mt-1">Add Ingredient</Button>
-                <Button variant="primary" type="submit" className="mb-5">Submit</Button>
+                <Button variant="primary" type="submit" className="mb-5" disabled={isSubmitting}>Submit</Button>
             </Form>
         </div>
     )

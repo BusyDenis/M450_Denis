@@ -10,7 +10,7 @@ const pizza = {
     name: 'Pizza',
     description: 'Mit Kaese',
     imageUrl: 'pizza.jpg',
-    ingredients: [{id: 'i-1', name: 'Mehl', unit: 'GRAMM', amount: 500, comment: ''}]
+    ingredients: [{id: 'i-1', name: 'Mehl', unit: 'GRAM', amount: 500, comment: ''}]
 };
 
 const renderPage = () => render(
@@ -48,7 +48,7 @@ test('saves changed recipe with PUT', async () => {
     await waitFor(() => expect(axios.put).toHaveBeenCalledTimes(1));
     expect(axios.put.mock.calls[0][0]).toBe('http://localhost:8080/api/recipes/recipe/abc-123');
     expect(axios.put.mock.calls[0][1].name).toBe('Pizza Margherita');
-    expect(axios.put.mock.calls[0][1].ingredients).toEqual([{name: 'Mehl', unit: 'GRAMM', amount: 500, comment: ''}]);
+    expect(axios.put.mock.calls[0][1].ingredients).toEqual([{name: 'Mehl', unit: 'GRAM', amount: 500, comment: ''}]);
     expect(await screen.findByText('Startseite')).toBeInTheDocument();
 });
 

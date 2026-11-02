@@ -31,7 +31,7 @@ class IngredientEntityMapperTest {
 
     @Test
     void domainToEntity() {
-        Ingredient ingredient = new Ingredient(UUID.randomUUID(), "Zucker", "Rohzucker", Unit.KILOGRAMM, 1);
+        Ingredient ingredient = new Ingredient(UUID.randomUUID(), "Zucker", "Rohzucker", Unit.KILOGRAM, 1);
 
         IngredientEntity entity = mapper.domainToEntity(ingredient);
 
@@ -39,7 +39,7 @@ class IngredientEntityMapperTest {
         softly.assertThat(entity.getId()).isEqualTo(ingredient.getId());
         softly.assertThat(entity.getName()).isEqualTo("Zucker");
         softly.assertThat(entity.getComment()).isEqualTo("Rohzucker");
-        softly.assertThat(entity.getUnit()).isEqualTo(Unit.KILOGRAMM);
+        softly.assertThat(entity.getUnit()).isEqualTo(Unit.KILOGRAM);
         softly.assertThat(entity.getAmount()).isEqualTo(1);
         softly.assertAll();
     }
