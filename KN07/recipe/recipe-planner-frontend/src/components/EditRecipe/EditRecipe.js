@@ -19,15 +19,14 @@ function EditRecipe() {
 
     const saveRecipe = (changedRecipe) => {
         return axios.put(baseURL + recipeId, changedRecipe)
-            .then(() => navigate('/'))
-            .catch(() => setError('Rezept konnte nicht gespeichert werden.'));
+            .then(() => navigate('/'));
     }
 
     if (!recipe) {
         return <p className="m-3">{error || 'Laden...'}</p>
     }
 
-    return <RecipeForm title="Edit Recipe" startRecipe={recipe} onSave={saveRecipe} error={error}/>
+    return <RecipeForm title="Edit Recipe" startRecipe={recipe} onSave={saveRecipe}/>
 }
 
 export default EditRecipe;

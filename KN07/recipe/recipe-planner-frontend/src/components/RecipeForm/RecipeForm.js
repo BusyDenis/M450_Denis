@@ -12,12 +12,12 @@ const newKey = () => 'ingredient-' + (++lastKey);
 const withKeys = (ingredients) =>
     (ingredients || []).map(ingredient => ({...ingredient, key: ingredient.id || newKey()}));
 
-function RecipeForm({title, startRecipe, onSave, error}) {
+function RecipeForm({title, startRecipe, onSave}) {
     const [name, setName] = useState(startRecipe.name || '');
     const [description, setDescription] = useState(startRecipe.description || '');
     const [imageUrl, setImageUrl] = useState(startRecipe.imageUrl || '');
     const [ingredients, setIngredients] = useState(() => withKeys(startRecipe.ingredients));
-    const [nameError, setNameError] = useState('');
+    const [error, setError] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     // Formular neu fuellen, wenn ein anderes Rezept uebergeben wird
@@ -56,10 +56,12 @@ function RecipeForm({title, startRecipe, onSave, error}) {
         }
 
         if (name.trim() === '') {
-            setNameError('Bitte einen Namen eingeben.');
+            setError('Bitte einen Namen eingeben.');
             return;
         }
 
+        // onSave gibt das Promise vom Request zurueck, so weiss das Formular, wann er fertig ist
+        setError('');
         setIsSubmitting(true);
         onSave({
             name: name,
@@ -71,14 +73,16 @@ function RecipeForm({title, startRecipe, onSave, error}) {
                 amount: Number(ingredient.amount),
                 comment: ingredient.comment || ''
             }))
-        }).finally(() => setIsSubmitting(false));
+        }).catch(() => {
+            setError('Rezept konnte nicht gespeichert werden.');
+            setIsSubmitting(false);
+        });
     }
 
     return (
         <div className="bg">
             <Form className="m-3" onSubmit={save}>
                 <h1 className="h3 bg-dark text-bg-primary mt-2">{title}</h1>
-                {nameError && <Alert variant="danger">{nameError}</Alert>}
                 {error && <Alert variant="danger">{error}</Alert>}
                 <Form.Group className="mb-1" controlId="recipeName">
                     <Form.Label>Recipe Name:</Form.Label>
