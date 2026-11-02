@@ -58,4 +58,17 @@ test('shows error when backend fails', async () => {
     fireEvent.click(screen.getByText('Submit'));
 
     expect(await screen.findByText('Rezept konnte nicht gespeichert werden.')).toBeInTheDocument();
+    expect(screen.getByText('Submit')).toBeEnabled();
+});
+
+test('sends recipe only once when submit is clicked twice', () => {
+    axios.post.mockReturnValue(new Promise(() => {}));
+    renderPage();
+
+    fireEvent.change(screen.getByLabelText('Recipe Name:'), {target: {value: 'Pizza'}});
+    fireEvent.click(screen.getByText('Submit'));
+    fireEvent.click(screen.getByText('Submit'));
+
+    expect(screen.getByText('Submit')).toBeDisabled();
+    expect(axios.post).toHaveBeenCalledTimes(1);
 });

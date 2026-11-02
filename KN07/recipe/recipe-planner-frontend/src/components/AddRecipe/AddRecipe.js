@@ -7,18 +7,22 @@ import AddIngredient from "../AddIngredient/AddIngredient";
 
 const baseURL = "http://localhost:8080/api/recipes";
 
+// Eindeutiger Key fuer jede Zutat. crypto.randomUUID() gibt es in Jest (jsdom) nicht,
+// darum ein Zaehler, der nie zurueckgesetzt wird und so keinen Key doppelt vergibt.
+let lastKey = 0;
+const newKey = () => 'ingredient-' + (++lastKey);
+
 function AddRecipe() {
     const navigate = useNavigate();
     const [name, setName] = useState('');
     const [description, setDescription] = useState('');
     const [imageUrl, setImageUrl] = useState('');
     const [ingredients, setIngredients] = useState([]);
-    const [nextKey, setNextKey] = useState(1);
     const [error, setError] = useState('');
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     const addIngredient = () => {
-        setIngredients([...ingredients, {key: nextKey, name: '', unit: 'PIECE', amount: '', comment: ''}]);
-        setNextKey(nextKey + 1);
+        setIngredients([...ingredients, {key: newKey(), name: '', unit: 'PIECE', amount: '', comment: ''}]);
     }
 
     const updateIngredient = (changedIngredient) => {
@@ -33,6 +37,10 @@ function AddRecipe() {
 
     const saveRecipe = (event) => {
         event.preventDefault();
+
+        if (isSubmitting) {
+            return;
+        }
 
         if (name.trim() === '') {
             setError('Bitte einen Namen eingeben.');
@@ -51,9 +59,13 @@ function AddRecipe() {
             }))
         };
 
+        setIsSubmitting(true);
         axios.post(baseURL, recipe)
             .then(() => navigate('/'))
-            .catch(() => setError('Rezept konnte nicht gespeichert werden.'));
+            .catch(() => {
+                setError('Rezept konnte nicht gespeichert werden.');
+                setIsSubmitting(false);
+            });
     }
 
     return (
@@ -89,7 +101,7 @@ function AddRecipe() {
                     />
                 )}
                 <Button variant="warning" onClick={addIngredient} className="mt-1">Add Ingredient</Button>
-                <Button variant="primary" type="submit" className="mb-5">Submit</Button>
+                <Button variant="primary" type="submit" className="mb-5" disabled={isSubmitting}>Submit</Button>
             </Form>
         </div>
     )
