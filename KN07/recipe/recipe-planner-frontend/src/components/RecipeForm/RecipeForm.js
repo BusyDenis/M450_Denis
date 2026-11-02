@@ -3,20 +3,25 @@ import '../AddRecipe/AddRecipe.css';
 import {Form, Button, Col, Row, Alert} from 'react-bootstrap';
 import AddIngredient from "../AddIngredient/AddIngredient";
 
+// Eindeutiger Key fuer jede Zutat. crypto.randomUUID() gibt es in Jest (jsdom) nicht,
+// darum ein Zaehler, der nie zurueckgesetzt wird und so keinen Key doppelt vergibt.
+let lastKey = 0;
+const newKey = () => 'ingredient-' + (++lastKey);
+
+// Zutaten aus der DB behalten ihre id als Key, alle anderen bekommen einen neuen Key
+const withKeys = (ingredients) =>
+    (ingredients || []).map(ingredient => ({...ingredient, key: ingredient.id || newKey()}));
+
 function RecipeForm({title, startRecipe, onSave, error}) {
     const [name, setName] = useState(startRecipe.name || '');
     const [description, setDescription] = useState(startRecipe.description || '');
     const [imageUrl, setImageUrl] = useState(startRecipe.imageUrl || '');
-    const [ingredients, setIngredients] = useState(
-        (startRecipe.ingredients || []).map((ingredient, index) => ({...ingredient, key: index + 1}))
-    );
-    const [nextKey, setNextKey] = useState(ingredients.length + 1);
+    const [ingredients, setIngredients] = useState(() => withKeys(startRecipe.ingredients));
     const [nameError, setNameError] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     const addIngredient = () => {
-        setIngredients([...ingredients, {key: nextKey, name: '', unit: 'PIECE', amount: '', comment: ''}]);
-        setNextKey(nextKey + 1);
+        setIngredients([...ingredients, {key: newKey(), name: '', unit: 'PIECE', amount: '', comment: ''}]);
     }
 
     const updateIngredient = (changedIngredient) => {
