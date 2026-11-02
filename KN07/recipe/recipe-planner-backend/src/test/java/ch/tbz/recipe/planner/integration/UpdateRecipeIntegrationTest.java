@@ -32,7 +32,7 @@ class UpdateRecipeIntegrationTest {
         Ingredient tomato = new Ingredient(null, "Tomato", "", Unit.PIECE, 5);
         Recipe created = service.addRecipe(new Recipe(null, "Pasta", "Alt", "", List.of(tomato)));
 
-        Ingredient cheese = new Ingredient(null, "Kaese", "Parmesan", Unit.GRAMM, 100);
+        Ingredient cheese = new Ingredient(null, "Kaese", "Parmesan", Unit.GRAM, 100);
         Recipe changed = new Recipe(null, "Pasta", "Neu", "", List.of(cheese));
         service.updateRecipe(created.getId(), changed);
 
