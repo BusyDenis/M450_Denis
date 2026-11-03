@@ -46,7 +46,7 @@ public class RecipePlannerApplication {
 							ingredient("Hackfleisch", "", Unit.GRAM, 400),
 							ingredient("tomaten ", "reif", Unit.PIECE, 3),
 							ingredient("Zwiebel", "", Unit.PIECE, 1)),
-					recipe("Pancakes", "Fluffig, zum Frühstück.", "2/2e/Stacked_Like_Pancakes_Mercury_Lounge_04.jpg/960px-Stacked_Like_Pancakes_Mercury_Lounge_04.jpg",
+					recipe("Pancakes", "Fluffig, zum Frühstück.", "4/40/Foodiesfeed.com_pouring-honey-on-pancakes-with-walnuts.jpg/960px-Foodiesfeed.com_pouring-honey-on-pancakes-with-walnuts.jpg",
 							ingredient("Mehl", "", Unit.GRAM, 250),
 							ingredient("Milch", "", Unit.DECILITRE, 4),
 							ingredient("Eier", "", Unit.PIECE, 2)),
