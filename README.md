@@ -10,6 +10,7 @@
 | KN06 | Unit Tests, Reports, CI/CD Pipeline | [LOESUNG.md](KN06/LOESUNG.md) |
 | KN07 | Code Reviews | [LOESUNG.md](KN07/LOESUNG.md) |
 | KN08 | Test Driven Development | [LOESUNG.md](KN08/LOESUNG.md) |
+| Projekt | Recipe Planner: Wochenplaner mit Einkaufsliste | [README.md](Projekt/README.md) |
 
 Präsentationen pro KN: `KNxx/praesentation/KNxx.pptx`
 
