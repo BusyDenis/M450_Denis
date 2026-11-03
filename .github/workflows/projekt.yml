@@ -1,0 +1,161 @@
+name: Projekt Pipeline
+
+on:
+  push:
+    paths:
+      - "Projekt/**"
+      - ".github/workflows/projekt.yml"
+  pull_request:
+    paths:
+      - "Projekt/**"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  checks: write
+  pull-requests: write
+  pages: write
+  id-token: write
+
+env:
+  BACKEND: Projekt/recipe-planner-backend
+  FRONTEND: Projekt/recipe-planner-frontend
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+          cache: maven
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: ${{ env.FRONTEND }}/package.json
+      - name: Backend bauen
+        working-directory: ${{ env.BACKEND }}
+        run: mvn --batch-mode compile
+      - name: Frontend bauen
+        working-directory: ${{ env.FRONTEND }}
+        run: |
+          npm install --no-audit --no-fund
+          npm run build
+
+  test-backend:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+          cache: maven
+      - name: Unit- und Integrationstests
+        working-directory: ${{ env.BACKEND }}
+        run: mvn --batch-mode test
+      - name: Testresultate anzeigen
+        if: always()
+        uses: dorny/test-reporter@v1
+        with:
+          name: Backend Tests
+          path: ${{ env.BACKEND }}/target/surefire-reports/TEST-*.xml
+          reporter: java-junit
+      - name: Reports sammeln
+        if: always()
+        working-directory: ${{ env.BACKEND }}
+        run: |
+          mkdir -p public/coverage
+          cp -r target/reports/* public/
+          mv public/surefire.html public/index.html
+          cp -r target/site/jacoco/* public/coverage/
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: backend-reports
+          path: ${{ env.BACKEND }}/public
+
+  test-frontend:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: ${{ env.FRONTEND }}/package.json
+      - name: Komponententests mit Coverage
+        working-directory: ${{ env.FRONTEND }}
+        run: |
+          npm install --no-audit --no-fund
+          npm run test:ci --if-present
+      - name: Testresultate anzeigen
+        if: always()
+        uses: dorny/test-reporter@v1
+        with:
+          name: Frontend Tests
+          path: ${{ env.FRONTEND }}/reports/junit.xml
+          reporter: jest-junit
+          fail-on-empty: false
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: frontend-reports
+          path: |
+            ${{ env.FRONTEND }}/reports
+            ${{ env.FRONTEND }}/coverage
+
+  # KN06-Reports bleiben auf der Startseite von GitHub Pages, das Projekt kommt unter /projekt/
+  kn06-reports:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+          cache: maven
+      - name: KN06 Tests
+        working-directory: KN06/recipe/recipe-planner-backend
+        run: |
+          mvn --batch-mode test
+          mkdir -p public/coverage
+          cp -r target/reports/* public/
+          mv public/surefire.html public/index.html
+          cp -r target/site/jacoco/* public/coverage/
+      - uses: actions/upload-artifact@v4
+        with:
+          name: kn06-reports
+          path: KN06/recipe/recipe-planner-backend/public
+
+  deploy-reports:
+    needs: [test-backend, test-frontend, kn06-reports]
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}projekt/
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+      - name: Seite zusammenbauen
+        run: |
+          mkdir -p site/projekt/backend site/projekt/frontend
+          cp -r artifacts/kn06-reports/* site/
+          cp -r artifacts/backend-reports/* site/projekt/backend/
+          cp -r artifacts/frontend-reports/coverage/lcov-report/* site/projekt/frontend/ || echo "kein Frontend-Report"
+          cp Projekt/reports-index.html site/projekt/index.html
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+      - name: Auf GitHub Pages veröffentlichen
+        id: deployment
+        uses: actions/deploy-pages@v4
