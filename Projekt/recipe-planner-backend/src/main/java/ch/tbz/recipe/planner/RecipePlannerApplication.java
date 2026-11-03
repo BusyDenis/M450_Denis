@@ -13,7 +13,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
 import java.util.List;
-import java.util.Random;
 import java.util.UUID;
 import java.util.stream.Stream;
 
@@ -21,14 +20,8 @@ import java.util.stream.Stream;
 @Slf4j
 public class RecipePlannerApplication {
 
-	private final static String DESCRIPTION = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.";
-	private final static List<String> IMAGES =
-			List.of("https://img.freepik.com/free-photo/grilled-gourmet-burger-with-cheese-tomato-onion-french-fries-generated-by-artificial-intelligence_25030-63181.jpg",
-					"https://img.taste.com.au/5qlr1PkR/taste/2016/11/spaghetti-bolognese-106560-1.jpeg",
-					"https://www.kitchensanctuary.com/wp-content/uploads/2020/04/Chicken-Fried-Rice-square-FS-.jpg",
-					"https://www.deliciousmagazine.co.uk/wp-content/uploads/2020/01/lasagne.jpg",
-					"https://recipeimages.migros.ch/crop/v-w-1200-h-630-a-center_center/ac38873942ada8c8154f0da0a748adf486a304d8/pommes-frites-0-16-9.jpg"
-					);
+	private final static String WIKIMEDIA = "https://upload.wikimedia.org/wikipedia/commons/thumb/";
+
 	public static void main(String[] args) {
 		SpringApplication.run(RecipePlannerApplication.class, args);
 	}
@@ -38,20 +31,40 @@ public class RecipePlannerApplication {
 
 	@Bean
 	CommandLineRunner init(RecipeRepository recipeRepository) {
-		Random rand = new Random();
-
 		return args -> {
+			// Demo-Rezepte mit echten Zutaten, damit die Einkaufsliste etwas zum Zusammenrechnen hat
 			Stream.of(
-					"Lasagne al Forno", "Spaghetti Bolognese", "Fried Rice", "Spaghetti Bolognese", "Pommes Frites",
-					"Lasagne al Forno", "Spaghetti Bolognese", "Fried Rice", "Spaghetti Bolognese", "Pommes Frites",
-					"Lasagne al Forno", "Spaghetti Bolognese", "Fried Rice", "Spaghetti Bolognese", "Pommes Frites").forEach(name -> {
-				int randomIndex = rand.nextInt(IMAGES.size());
-				Recipe recipe = new Recipe(UUID.randomUUID(), name, DESCRIPTION, IMAGES.get(randomIndex), List.of(new Ingredient(UUID.randomUUID(), "Tomato", "The big ones", Unit.PIECE, 5)));
-				var entity = mapper.domainToEntity(recipe);
-				recipeRepository.save(entity);
-			});
+					recipe("Lasagne", "Klassisch mit Hackfleisch und Béchamel.", "3/34/Lasagna_4.jpg/960px-Lasagna_4.jpg",
+							ingredient("Hackfleisch", "Rind", Unit.GRAM, 500),
+							ingredient("Tomaten", "", Unit.PIECE, 4),
+							ingredient("Lasagneblätter", "", Unit.GRAM, 250),
+							ingredient("Milch", "für die Béchamel", Unit.DECILITRE, 5),
+							ingredient("Käse", "Mozzarella", Unit.GRAM, 200)),
+					recipe("Spaghetti Bolognese", "Schnell gemacht, perfekt unter der Woche.",
+							"3/3a/Liat_Portal_for_Foodie_Disorder_-_Spaghetti_Bolognese_with_vegetables.jpg/960px-Liat_Portal_for_Foodie_Disorder_-_Spaghetti_Bolognese_with_vegetables.jpg",
+							ingredient("Spaghetti", "", Unit.GRAM, 500),
+							ingredient("Hackfleisch", "", Unit.GRAM, 400),
+							ingredient("tomaten ", "reif", Unit.PIECE, 3),
+							ingredient("Zwiebel", "", Unit.PIECE, 1)),
+					recipe("Pancakes", "Fluffig, zum Frühstück.", "2/2e/Stacked_Like_Pancakes_Mercury_Lounge_04.jpg/960px-Stacked_Like_Pancakes_Mercury_Lounge_04.jpg",
+							ingredient("Mehl", "", Unit.GRAM, 250),
+							ingredient("Milch", "", Unit.DECILITRE, 4),
+							ingredient("Eier", "", Unit.PIECE, 2)),
+					recipe("Gemüsecurry", "Vegetarisch mit Kokosmilch und Reis.", "6/67/Mixed_vegetable_curry_1.jpg/960px-Mixed_vegetable_curry_1.jpg",
+							ingredient("Kokosmilch", "", Unit.DECILITRE, 4),
+							ingredient("Reis", "Basmati", Unit.GRAM, 300),
+							ingredient("Zwiebel", "", Unit.PIECE, 2),
+							ingredient("Tomaten", "aus der Dose", Unit.GRAM, 400))
+			).forEach(recipe -> recipeRepository.save(mapper.domainToEntity(recipe)));
 			recipeRepository.findAll().forEach(s -> log.info(s.toString()));
 		};
 	}
 
+	private static Recipe recipe(String name, String description, String image, Ingredient... ingredients) {
+		return new Recipe(UUID.randomUUID(), name, description, WIKIMEDIA + image, List.of(ingredients));
+	}
+
+	private static Ingredient ingredient(String name, String comment, Unit unit, int amount) {
+		return new Ingredient(UUID.randomUUID(), name, comment, unit, amount);
+	}
 }
