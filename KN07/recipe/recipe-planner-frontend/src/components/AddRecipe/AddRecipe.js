@@ -1,110 +1,22 @@
-import React, {useState} from 'react';
-import './AddRecipe.css';
-import { useForm } from "react-hook-form";
-import {Form, Button, Col, Row} from 'react-bootstrap';
-
+import React from 'react';
+import {useNavigate} from "react-router-dom";
 import axios from "axios";
-import AddIngredient from "../AddIngredient/AddIngredient";
+import RecipeForm from "../RecipeForm/RecipeForm";
+
+const baseURL = "http://localhost:8080/api/recipes";
+
+// ausserhalb der Komponente, damit es bei jedem Render dasselbe Objekt ist (sonst setzt der useEffect im Formular alles zurueck)
+const emptyRecipe = {};
 
 function AddRecipe() {
-    const [ ingredients, setIngredients ] = useState([])
-    const [formData, setFormData] = useState({
-        "name": '',
-        "description": '',
-        "imageUrl": '',
-        "ingredients": [],
-        "id": null
-    })
+    const navigate = useNavigate();
 
-    const [listId, setListId] = useState(1)
-
-    const {
-        register,
-        handleSubmit,
-        watch,
-        formState: {errors},
-    } = useForm()
-
-    const addIngredient = () => {
-
-        setFormData(({...formData, ingredients: [
-                ...formData.ingredients, {
-                    listId: listId,
-                    ingredient: '',
-                    unit: 'PIECE',
-                    quantity: ''
-                }
-            ]}))
-        setListId(listId + 1)
-
-    }
-    const updateIngredient = (ingredientObj) => {
-        const updatedIngredients = formData.ingredients.map((ingredient) => {
-            if (ingredient.listId === ingredientObj.listId) {
-                return ingredientObj
-            }
-            return ingredient
-        })
-        setFormData({...formData, ingredients: updatedIngredients})
+    const saveRecipe = (recipe) => {
+        return axios.post(baseURL, recipe)
+            .then(() => navigate('/'));
     }
 
-    const removeIngredient = (ingredientObj) => {
-        const updatedIngredients = formData.ingredients.filter((ingredient) => ingredient.listId !== ingredientObj.listId)
-        setFormData({...formData, ingredients: updatedIngredients})
-    }
-
-    const renderIngredients = formData.ingredients.map(ingredient => <AddIngredient
-        key={ingredient.listId}
-        ingredient={ingredient}
-        ingredients={ingredients}
-        listId={listId - 1}
-        updateIngredient={updateIngredient}
-        removeIngredient={removeIngredient}
-    />)
-
-    return (
-        <>
-            <div className="bg">
-                <div className="m-3">
-                    <h1 className="h3 bg-dark text-bg-primary mt-2">Add Recipe</h1>
-                    <Form.Group className="mb-1" controlId="formBasicName">
-                        <Form.Label>Recipe Name:</Form.Label>
-                        <Form.Control placeholder="Name"/>
-                    </Form.Group><Form.Group className="mb-1" controlId="formBasicDescription">
-                        <Form.Label>Description:</Form.Label>
-                        <Form.Control placeholder="Description"/>
-                    </Form.Group><Form.Group className="mb-1 mb-5" controlId="formBasicImageUrl">
-                        <Form.Label>Image URL:</Form.Label>
-                        <Form.Control placeholder="URL"/>
-                    </Form.Group>
-                    <Row>
-                        <Col>Ingredient</Col>
-                        <Col>Unit</Col>
-                        <Col>Quanity</Col>
-                        <Col xs={1}></Col>
-                    </Row>
-                    <hr/>
-                    <Row>
-                        <br></br>
-                    </Row>
-                    {renderIngredients}
-                    <Row>
-                        <br></br>
-                        <Button
-                            variant='warning'
-                            onClick={addIngredient}
-                            className="mt-1"
-                            >Add Ingredient</Button>
-                    </Row>
-                    <Button variant="primary"  type="submit" className="mb-5">
-                        Submit
-                    </Button>
-                </div>
-
-            </div>
-
-        </>
-    )
+    return <RecipeForm title="Add Recipe" startRecipe={emptyRecipe} onSave={saveRecipe}/>
 }
 
 export default AddRecipe;
