@@ -35,14 +35,14 @@ jobs:
         with:
           node-version: 20
           cache: npm
-          cache-dependency-path: ${{ env.FRONTEND }}/package-lock.json
+          cache-dependency-path: ${{ env.FRONTEND }}/package.json
       - name: Backend bauen
         working-directory: ${{ env.BACKEND }}
         run: mvn --batch-mode compile
       - name: Frontend bauen
         working-directory: ${{ env.FRONTEND }}
         run: |
-          npm ci
+          npm install --no-audit --no-fund
           npm run build
 
   test-backend:
@@ -88,11 +88,11 @@ jobs:
         with:
           node-version: 20
           cache: npm
-          cache-dependency-path: ${{ env.FRONTEND }}/package-lock.json
+          cache-dependency-path: ${{ env.FRONTEND }}/package.json
       - name: Komponententests mit Coverage
         working-directory: ${{ env.FRONTEND }}
         run: |
-          npm ci
+          npm install --no-audit --no-fund
           npm run test:ci --if-present
       - name: Testresultate anzeigen
         if: always()
