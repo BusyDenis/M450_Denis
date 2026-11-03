@@ -119,16 +119,17 @@ Die Commits zeigen die Phasen: *Tests geschrieben (rot)* → *implementiert (gr�
 
 ## Code Reviews
 
-Jedes Feature hat einen eigenen Branch und einen Pull Request, gemerged wird erst nach dem Review.
+Jedes Feature hat einen eigenen Branch und einen Pull Request, gemerged wird erst, wenn die Pipeline grün ist.
 Die Pull Requests aus KN07 (Rezept hinzufügen, Rezept bearbeiten Backend/Frontend) gehören zur Basis des Projekts,
 dazu kommen die Projekt-PRs für die Einkaufsliste (Backend, Frontend) und Pipeline/Doku.
 
 ## KI-Nutzung
 
-Im Projekt wurde KI eingesetzt:
-
-- **Automatisches Erstellen von Code durch einen Agenten** (Claude Code): Einkaufsliste im Backend und Frontend, Tests, Pipeline und ein Entwurf dieser Doku
-- **Reviewen:** Vorschläge für Refactorings und fehlende Testfälle
+| Teil | KI-Einsatz |
+|---|---|
+| Code (Backend und Frontend) | teilweise mit KI erstellt |
+| Tests | teilweise mit KI erstellt |
+| Präsentation | mit KI erstellt |
 
 Den Scope, die Testfälle der Einkaufsliste und die Reihenfolge Red → Green → Refactor habe ich vorgegeben.
 Den Code habe ich gelesen und lokal laufen lassen, und ich kann ihn erklären.
