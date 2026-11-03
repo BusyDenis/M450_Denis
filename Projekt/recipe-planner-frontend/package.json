@@ -20,7 +20,8 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "test:ci": "react-scripts test --watchAll=false --coverage --reporters=default --reporters=jest-junit"
   },
   "eslintConfig": {
     "extends": [
@@ -39,5 +40,19 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "jest-junit": "^17.0.0"
+  },
+  "jest": {
+    "coverageReporters": [
+      "html",
+      "text-summary",
+      "lcov"
+    ]
+  },
+  "jest-junit": {
+    "outputDirectory": "reports",
+    "outputName": "junit.xml"
   }
 }
