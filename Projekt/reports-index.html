@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>M450 Projekt – Testreports</title>
+  <style>
+    body { font-family: system-ui, sans-serif; background: #f6f7f5; color: #1d1d1b; margin: 0; padding: 48px 24px; }
+    main { max-width: 720px; margin: 0 auto; }
+    .label { font: 600 12px ui-monospace, monospace; letter-spacing: .08em; color: #1f7a4d; text-transform: uppercase; }
+    h1 { font-size: 40px; margin: 8px 0 4px; }
+    p { color: #555; }
+    a.card { display: block; background: #fff; border-radius: 10px; padding: 18px 20px; margin: 12px 0; color: inherit; text-decoration: none; box-shadow: 0 1px 3px rgba(0,0,0,.08); }
+    a.card:hover { box-shadow: 0 2px 8px rgba(0,0,0,.14); }
+    a.card b { display: block; font-size: 18px; margin-bottom: 4px; }
+  </style>
+</head>
+<body>
+<main>
+  <div class="label">Modul 450 · Projekt</div>
+  <h1>Recipe Planner – Testreports</h1>
+  <p>Wird bei jedem Push auf <code>main</code> von der GitHub-Actions-Pipeline neu erstellt.</p>
+  <a class="card" href="backend/index.html"><b>Backend · Testresultate</b>JUnit 5 Unit-, Controller- und Integrationstests (Surefire)</a>
+  <a class="card" href="backend/coverage/index.html"><b>Backend · Code Coverage</b>JaCoCo Report</a>
+  <a class="card" href="frontend/index.html"><b>Frontend · Code Coverage</b>Jest / React Testing Library (Istanbul)</a>
+</main>
+</body>
+</html>
